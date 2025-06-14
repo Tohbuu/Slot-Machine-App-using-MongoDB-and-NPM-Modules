@@ -21,9 +21,11 @@ Neon Spin is a futuristic slot machine web application built with Node.js, Expre
 
 ```
 .env
+.env.example
 .gitignore
 db.json
 package.json
+README.md
 server.js
 .qodo/
 config/
@@ -91,7 +93,7 @@ npm install
 
 ### 3. Configure Environment Variables
 
-Create a `.env` file in the root directory (already present in this repo):
+- Copy `.env.example` to `.env` and fill in your values:
 
 ```
 MONGODB_URI=mongodb://localhost:27017/slot-machine
@@ -100,6 +102,7 @@ PORT=3000
 ```
 
 - Replace `your_jwt_secret_here` with a secure random string.
+- **Important:** `.env` is now included in `.gitignore` so it will not be committed to the repository.
 
 ### 4. Start MongoDB
 
@@ -164,10 +167,11 @@ The server will start on [http://localhost:3000](http://localhost:3000) by defau
 ## Development Notes
 
 - All frontend assets are in the `public/` directory.
-- Main backend logic is in `server.js` and the `controllers/` folder.
-- MongoDB models are in `models/`.
+- Main backend logic is in [`server.js`](server.js) and the [`controllers/`](controllers/) folder.
+- MongoDB models are in [`models/`](models/).
 - Multer is used for avatar uploads, configured in [`config/multer.js`](config/multer.js).
 - Session management uses `express-session` (for logout), but authentication is JWT-based.
+- Environment variables are managed in `.env` (see `.env.example` for a template).
 
 ---
 
@@ -176,6 +180,13 @@ The server will start on [http://localhost:3000](http://localhost:3000) by defau
 - **MongoDB Connection Issues:** Ensure MongoDB is running and the URI in `.env` is correct.
 - **Port in Use:** Change the `PORT` in `.env` if 3000 is occupied.
 - **File Upload Errors:** Only JPEG, PNG, or GIF images up to 2MB are allowed for avatars.
+- **Accidentally committed `.env`?**  
+  Remove it from git tracking with:
+  ```sh
+  git rm --cached .env
+  git commit -m "Remove .env from repository"
+  git push
+  ```
 
 ---
 
