@@ -200,4 +200,4 @@ _Add screenshots of the slot machine, leaderboard, and profile page here!_
 
 ## Contact
 
-For questions or suggestions, open an issue or contact [your-email@example.com](mailto:your-email@example.com).
+For questions or suggestions, open an issue or contact [rin96tohsakaaa69@gmail.com](mailto:rin96tohsakaaa69@gmail.com).
