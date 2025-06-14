@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leaderboard - Neon Spin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">NEON SPIN</div>
+      <nav class="nav-menu">
+        <a href="/" class="nav-link">Play</a>
+        <a href="/leaderboard" class="nav-link active">Leaderboard</a>
+        <a href="/profile" class="nav-link">Profile</a>
+        <a href="/logout" class="nav-link">Logout</a>
+      </nav>
+      <div class="user-info">
+        <span class="balance">Balance: <span class="balance-amount">0</span></span>
+      </div>
+    </header>
+    
+    <main>
+      <section class="leaderboard-section">
+        <h1 class="section-title">TOP PLAYERS</h1>
+        
+        <div class="jackpot-info">
+          <div class="jackpot-label">Current Jackpot:</div>
+          <div class="jackpot-amount">10,000</div>
+        </div>
+        
+        <div class="leaderboard-table">
+          <div class="table-header">
+            <div class="rank">Rank</div>
+            <div class="player">Player</div>
+            <div class="wins">Total Wins</div>
+            <div class="jackpots">Jackpots</div>
+            <div class="level">Level</div>
+          </div>
+          
+          <div class="table-body" id="leaderboard-body">
+            <!-- Players will be loaded here -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script src="/js/leaderboard.js"></script>
+</body>
+</html>

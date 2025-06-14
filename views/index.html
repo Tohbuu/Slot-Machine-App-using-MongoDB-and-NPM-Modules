@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Neon Spin - Futuristic Slot Machine</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">NEON SPIN</div>
+      <nav class="nav-menu">
+        <a href="/" class="nav-link active">Play</a>
+        <a href="/profile" class="nav-link">Profile</a>
+        <a href="/logout" class="nav-link">Logout</a>
+        <a href="/leaderboard" class="nav-link">Leaderboard</a>
+      </nav>
+      <div class="user-info">
+        <span class="balance">Balance: <span class="balance-amount">0</span></span>
+      </div>
+    </header>
+    
+    <main>
+      <section class="slot-machine">
+        <div class="reels-container">
+          <!-- Reels will be inserted here by JavaScript -->
+        </div>
+        
+        <div class="controls">
+          <div class="bet-controls">
+            <button class="bet-btn bet-decrease">-</button>
+            <span class="bet-amount">10</span>
+            <button class="bet-btn bet-increase">+</button>
+            <button class="bet-btn bet-max">MAX</button>
+          </div>
+          
+          <button class="spin-btn">SPIN</button>
+          
+          <div class="result-display"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script src="/js/slot-machine.js"></script>
+</body>
+</html>

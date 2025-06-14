@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Neon Spin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">NEON SPIN</div>
+      <nav class="nav-menu">
+        <a href="/" class="nav-link">Play</a>
+        <a href="/profile" class="nav-link active">Profile</a>
+        <a href="/logout" class="nav-link">Logout</a>
+      </nav>
+      <div class="user-info">
+        <span class="balance">Balance: <span class="balance-amount">0</span></span>
+      </div>
+    </header>
+    
+    <main>
+      <section class="profile-section">
+        <div class="profile-header">
+          <img src="/images/avatars/default.png" alt="Profile Picture" class="profile-avatar">
+          
+          <div class="profile-info">
+            <h2>Username</h2>
+            
+            <div class="profile-stats">
+              <div class="stat-item">
+                <div class="stat-value balance">0</div>
+                <div class="stat-label">Credits</div>
+              </div>
+              
+              <div class="stat-item">
+                <div class="stat-value level">1</div>
+                <div class="stat-label">Level</div>
+              </div>
+            </div>
+            
+            <div class="progress-container">
+              <div>Progress to next level</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <form class="profile-form">
+          <div class="form-row">
+            <div class="form-col">
+              <div class="form-group">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-input">
+              </div>
+            </div>
+            
+            <div class="form-col">
+              <div class="form-group">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-input">
+              </div>
+            </div>
+          </div>
+          
+          <button type="submit" class="submit-btn">SAVE CHANGES</button>
+        </form>
+        
+        <div class="theme-selector">
+          <h3>Select Theme:</h3>
+          <div class="theme-option" data-theme="default" style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);"></div>
+          <div class="theme-option" data-theme="cyber" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);"></div>
+          <div class="theme-option" data-theme="neon" style="background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);"></div>
+          <div class="theme-option" data-theme="dark" style="background: linear-gradient(135deg, #232526 0%, #414345 100%);"></div>
+        </div>
+      </section>
+    </main>
+  </div>
+  
+  <script src="/js/profile.js"></script>
+</body>
+</html>
