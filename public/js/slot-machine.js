@@ -162,45 +162,86 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
   
-  // Animate reels with 3D rotation
+  // Animate reels with requestAnimationFrame and dynamic image updates
   async function animateReels(finalSymbols) {
     const reels = document.querySelectorAll('.reel');
-    const spinDuration = 2000; // 2 seconds
-    const frames = 60; // FPS
-    const totalFrames = (spinDuration / 1000) * frames;
-    
-    const animations = Array.from(reels).map((reel, index) => {
-      return new Promise((resolve) => {
-        let frame = 0;
-        const startRotation = 0;
-        const endRotation = 1080 + (index * 120); // 3 full rotations + stagger
+    const symbolCount = SYMBOLS.length;
+    const spinDuration = 1200; // ms
+    const extraSpins = 3; // Number of extra full spins before stopping
 
-        const animate = () => {
-          frame++;
-          const progress = frame / totalFrames;
-          const easeProgress = easeOutCubic(progress);
-          const rotation = startRotation + (endRotation * easeProgress);
-          
-          reel.style.transform = `rotateX(${rotation}deg)`;
+    // Helper to animate a single reel
+    function animateReel(reel, finalSymbol, delay = 0) {
+      return new Promise(resolve => {
+        const symbolIndex = SYMBOLS.findIndex(s => s.name === finalSymbol);
+        const faceAngle = 360 / SYMBOLS.length;
+        const finalRotation = 0; // Always end at 0deg for upright
+        const totalRotation = (3 * 360) + (symbolIndex * faceAngle); // Extra spins + offset to result
+        const start = performance.now() + delay;
+        let lastFrameSymbol = null;
 
-          if (frame < totalFrames) {
-            requestAnimationFrame(animate);
+        function frame(now) {
+          const elapsed = Math.max(0, now - start);
+          let t = Math.min(1, elapsed / 1200);
+          const eased = (--t) * t * t + 1;
+          const currentRotation = totalRotation - eased * totalRotation;
+
+          reel.style.transform = `rotateX(${currentRotation}deg)`;
+
+          // Calculate which symbol should be visible at this rotation
+          const normalizedRotation = (currentRotation % 360 + 360) % 360;
+          const visibleFace = Math.round(normalizedRotation / faceAngle) % SYMBOLS.length;
+          if (lastFrameSymbol !== visibleFace) {
+            updateReelFaceImage(reel, visibleFace);
+            lastFrameSymbol = visibleFace;
+          }
+
+          if (elapsed < 1200) {
+            requestAnimationFrame(frame);
           } else {
-            // Snap to final symbol
-            const symbolIndex = SYMBOLS.findIndex(s => s.name === finalSymbols[index]);
-            const finalRotation = 360 - (symbolIndex * 60);
-            reel.style.transform = `rotateX(${finalRotation}deg)`;
+            // Snap to upright and update faces so the result is at the front
+            reel.style.transform = `rotateX(0deg)`;
+            updateReelFaces(reel, symbolIndex);
             resolve();
           }
-        };
-
-        animate();
+        }
+        requestAnimationFrame(frame);
       });
-    });
+    }
 
-    await Promise.all(animations);
+    // Animate all reels in parallel (or stagger with delay if desired)
+    await Promise.all(Array.from(reels).map((reel, i) =>
+      animateReel(reel, finalSymbols[i], i * 120)
+    ));
   }
 
+  // Update all faces so the front face (0deg) is the result symbol
+  function updateReelFaces(reel, resultIndex) {
+    const faces = reel.querySelectorAll('.reel-face');
+    const symbolCount = SYMBOLS.length;
+    for (let j = 0; j < symbolCount; j++) {
+      // The result symbol is at the front, the rest follow in order
+      const symbolIdx = (resultIndex + j) % symbolCount;
+      const symbol = SYMBOLS[symbolIdx];
+      const img = faces[j].querySelector('img');
+      img.src = `/images/symbols/${symbol.name}.png`;
+      img.alt = symbol.name;
+    }
+  }
+
+  // Update only the visible face's image for smoother animation
+  function updateReelFaceImage(reel, visibleFaceIndex) {
+    const faces = reel.querySelectorAll('.reel-face');
+    const symbolCount = SYMBOLS.length;
+    // For a spinning effect, cycle through symbols
+    for (let j = 0; j < symbolCount; j++) {
+      const symbolIdx = (visibleFaceIndex + j) % symbolCount;
+      const symbol = SYMBOLS[symbolIdx];
+      const img = faces[j].querySelector('img');
+      img.src = `/images/symbols/${symbol.name}.png`;
+      img.alt = symbol.name;
+    }
+  }
+  
   // Easing function for smooth animation
   function easeOutCubic(t) {
     return (--t) * t * t + 1;
