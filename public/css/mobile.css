@@ -19,6 +19,136 @@
   
   /* General */
   .section-header h2 {
+    font-size: 1.1rem;
+  }
+
+  .container {
+    padding: 0 5px;
+  }
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .logo {
     font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+
+  .nav-menu {
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 1rem;
+  }
+
+  .user-info {
+    flex-direction: row;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .reels-container {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .reel {
+    width: 80px;
+    height: 100px;
+  }
+
+  .controls {
+    gap: 10px;
+  }
+
+  .bet-controls, .payline-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .spin-btn {
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 12px 0;
+  }
+
+  .bank-section, .profile-section, .booster-section, .rewards-section {
+    padding: 10px;
+    margin: 10px 0;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 15px;
+    align-items: center;
+  }
+
+  .profile-avatar, .avatar-preview {
+    width: 90px;
+    height: 90px;
+  }
+
+  .theme-selector {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .theme-option {
+    width: 40px;
+    height: 40px;
+  }
+
+  .leaderboard-table, .table-header, .table-row {
+    display: grid;
+    grid-template-columns: 32px 1.5fr 1fr 1fr; /* Combine player name and avatar, reduce columns */
+    font-size: 0.95rem;
+    padding: 8px;
+    min-width: 350px;
+  }
+
+  .table-header .level,
+  .table-row .level {
+    display: none; /* Optionally hide level column on mobile for space */
+  }
+
+  .player {
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+
+  .player-avatar {
+    width: 24px;
+    height: 24px;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+  }
+
+  .jackpot-info {
+    font-size: 1rem;
+    margin-bottom: 15px;
+  }
+
+  .container {
+    padding: 0 2px;
+  }
+
+  .leaderboard-table {
+    overflow-x: auto;
+    display: block;
+    width: 100%;
+  }
+
+  .table-header, .table-row {
+    min-width: 500px;
+  }
+
+  .progress-bar {
+    height: 10px;
   }
 }

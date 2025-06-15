@@ -711,6 +711,52 @@ header {
   background: #9d50bb;
 }
 
+/* Payline Dropdown - Added code */
+.payline-dropdown {
+  position: relative;
+  display: inline-block;
+  margin-right: 10px;
+}
+
+.payline-dropdown-btn {
+  background: var(--primary-color, #6e48aa);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.payline-dropdown-menu {
+  position: absolute;
+  left: 0;
+  top: 110%;
+  background: #222;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  z-index: 10;
+  min-width: 180px;
+  padding: 8px 0;
+  display: none;
+}
+
+.payline-dropdown-menu button {
+  background: none;
+  border: none;
+  color: #fff;
+  width: 100%;
+  text-align: left;
+  padding: 10px 18px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.payline-dropdown-menu button:hover {
+  background: var(--primary-color, #6e48aa);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .reel {

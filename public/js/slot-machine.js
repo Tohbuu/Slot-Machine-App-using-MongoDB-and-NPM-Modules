@@ -14,36 +14,28 @@ document.addEventListener('DOMContentLoaded', () => {
   const cashoutBtn = document.querySelector('.cashout-btn');
   const cashoutResult = document.querySelector('.cashout-result');
 
+  // Payline dropdown
+  const paylineDropdownBtn = document.querySelector('.payline-dropdown-btn');
+  const paylineDropdownMenu = document.querySelector('.payline-dropdown-menu');
+  const paylineSelectAllBtn = document.querySelector('.payline-select-all');
+  const paylineDeselectAllBtn = document.querySelector('.payline-deselect-all');
+  const paylineRecommendedBtn = document.querySelector('.payline-recommended');
+
   // Game State
   let balance = 0;
   let betPerLine = 10;
   let isSpinning = false;
-  let paylines = [0, 1, 2, 3, 4]; // All 5 by default
-  const SYMBOLS = [
-    { name: 'seven' }, 
-    { name: 'bar' }, 
-    { name: 'cherry' }, 
-    { name: 'bell' }, 
-    { name: 'diamond' }, 
-    { name: 'horseshoe' },
-    { name: 'wild' },
-    { name: 'scatter' }
-  ];
+  let paylines = [0, 1, 2, 3, 4]; // Default selected paylines
 
-  // Initialize game
+  // --- Initialization ---
   initGame();
 
-  // Event Listeners
+  // --- Event Listeners ---
   spinBtn.addEventListener('click', spin);
   increaseBetBtn.addEventListener('click', () => adjustBet(1));
   decreaseBetBtn.addEventListener('click', () => adjustBet(-1));
   maxBetBtn.addEventListener('click', setMaxBet);
   paylineCheckboxes.forEach(cb => cb.addEventListener('change', updatePaylines));
-
-  // Bonus modal elements
-  const bonusModal = document.getElementById('bonus-modal');
-  const bonusCardsContainer = bonusModal.querySelector('.bonus-cards');
-  const closeBonusBtn = bonusModal.querySelector('.close-bonus');
 
   if (cashoutBtn) {
     cashoutBtn.addEventListener('click', async () => {
@@ -75,6 +67,47 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- Payline Dropdown Logic ---
+  if (paylineDropdownBtn && paylineDropdownMenu) {
+    paylineDropdownBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      paylineDropdownMenu.style.display = paylineDropdownMenu.style.display === 'block' ? 'none' : 'block';
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!paylineDropdownBtn.contains(e.target) && !paylineDropdownMenu.contains(e.target)) {
+        paylineDropdownMenu.style.display = 'none';
+      }
+    });
+
+    if (paylineSelectAllBtn) {
+      paylineSelectAllBtn.addEventListener('click', () => {
+        paylineCheckboxes.forEach(cb => cb.checked = true);
+        updatePaylines();
+        paylineDropdownMenu.style.display = 'none';
+      });
+    }
+
+    if (paylineDeselectAllBtn) {
+      paylineDeselectAllBtn.addEventListener('click', () => {
+        paylineCheckboxes.forEach(cb => cb.checked = false);
+        paylineCheckboxes[0].checked = true;
+        updatePaylines();
+        paylineDropdownMenu.style.display = 'none';
+      });
+    }
+
+    if (paylineRecommendedBtn) {
+      paylineRecommendedBtn.addEventListener('click', () => {
+        paylineCheckboxes.forEach((cb, idx) => cb.checked = (idx === 0));
+        updatePaylines();
+        paylineDropdownMenu.style.display = 'none';
+      });
+    }
+  }
+
+  // --- Functions ---
+
   function initGame() {
     fetch('/api/users/me', {
       headers: {
@@ -87,9 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
           balance = data.user.balance;
           updateBalanceDisplay();
           updateBetDisplay();
-          createReels(); // <-- Ensure reels are created after user data loads
-          updateHeaderUserInfo(); // Also update avatar and balances in header
-          fetchBankBalance(); // Update bank balance in both header and bank section
+          createReels();
+          updateHeaderUserInfo();
+          fetchBankBalance();
         } else {
           window.location.href = '/login';
         }
@@ -181,13 +214,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Animate reels to show the 3x3 grid result with classic spinning effect and card spin
   async function animateReels(grid) {
     const reels = document.querySelectorAll('.reel');
-    const symbolNames = SYMBOLS.map(s => s.name);
-    const spinTimes = [900, 1200, 1500]; // ms for each reel to spin
+    const symbolNames = [
+      'seven', 'bar', 'cherry', 'bell', 'diamond', 'horseshoe', 'wild', 'scatter'
+    ];
+    const spinTimes = [900, 1200, 1500];
 
-    // Start spinning all reels (show random symbols and spin cards)
     let intervals = [];
     for (let col = 0; col < 3; col++) {
       intervals[col] = setInterval(() => {
@@ -195,17 +228,13 @@ document.addEventListener('DOMContentLoaded', () => {
           const face = reels[col].children[row];
           const img = face.querySelector('img');
           img.src = `/images/symbols/${symbolNames[Math.floor(Math.random() * symbolNames.length)]}.png`;
-          face.classList.add('spinning'); // Add spinning class
-          // Remove and re-add to restart animation
-          face.offsetWidth; // force reflow
-          face.classList.remove('spinning');
-          void face.offsetWidth; // force reflow again
           face.classList.add('spinning');
+          face.offsetWidth;
+          face.classList.remove('spinning');
         }
       }, 50);
     }
 
-    // Stop each reel in sequence, revealing the final symbols
     for (let col = 0; col < 3; col++) {
       await new Promise(res => setTimeout(res, spinTimes[col]));
       clearInterval(intervals[col]);
@@ -215,7 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const img = face.querySelector('img');
         img.src = `/images/symbols/${symbol}.png`;
         img.alt = symbol;
-        face.classList.remove('spinning'); // Remove spinning class
+        face.classList.remove('spinning');
       }
     }
   }
@@ -262,6 +291,10 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function showBonusModal(bonusData, betPerLine, paylines) {
+    const bonusModal = document.getElementById('bonus-modal');
+    const bonusCardsContainer = bonusModal.querySelector('.bonus-cards');
+    const closeBonusBtn = bonusModal.querySelector('.close-bonus');
+
     bonusModal.style.display = 'flex';
     bonusCardsContainer.innerHTML = '';
     closeBonusBtn.style.display = 'none';
@@ -320,6 +353,9 @@ document.addEventListener('DOMContentLoaded', () => {
           if (avatar) {
             avatar.src = `/images/avatars/${data.user.profilePicture || 'default.png'}`;
           }
+          // Also update the bank section if present
+          const bankBalanceDisplay = document.querySelector('.bank-balance');
+          if (bankBalanceDisplay) bankBalanceDisplay.textContent = data.user.bankBalance || 0;
         }
       });
   }
@@ -330,8 +366,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     const data = await res.json();
     if (data.success) {
-      document.querySelector('.bank-balance').textContent = data.bankBalance;
-      // Optionally update header too:
+      const bankBalanceDisplay = document.querySelector('.bank-balance');
+      if (bankBalanceDisplay) bankBalanceDisplay.textContent = data.bankBalance;
       const headerBank = document.querySelector('.bank-amount');
       if (headerBank) headerBank.textContent = data.bankBalance;
     }
