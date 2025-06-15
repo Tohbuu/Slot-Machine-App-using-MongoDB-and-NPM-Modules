@@ -38,12 +38,33 @@
             <button class="bet-btn bet-increase">+</button>
             <button class="bet-btn bet-max">MAX</button>
           </div>
+          <div class="payline-controls">
+            <label>Paylines:</label>
+            <span class="payline-checkboxes">
+              <label><input type="checkbox" class="payline-checkbox" value="0" checked>1</label>
+              <label><input type="checkbox" class="payline-checkbox" value="1" checked>2</label>
+              <label><input type="checkbox" class="payline-checkbox" value="2" checked>3</label>
+              <label><input type="checkbox" class="payline-checkbox" value="3" checked>4</label>
+              <label><input type="checkbox" class="payline-checkbox" value="4" checked>5</label>
+              <label><input type="checkbox" class="payline-checkbox" value="5">6</label>
+              <label><input type="checkbox" class="payline-checkbox" value="6">7</label>
+              <label><input type="checkbox" class="payline-checkbox" value="7">8</label>
+              <label><input type="checkbox" class="payline-checkbox" value="8">9</label>
+              <label><input type="checkbox" class="payline-checkbox" value="9">10</label>
+            </span>
+          </div>
           <button class="spin-btn">SPIN</button>
           <div class="result-display"></div>
         </div>
       </section>
 
-      
+      <div id="bonus-modal" class="bonus-modal" style="display:none;">
+        <div class="bonus-content">
+          <h2>Bonus Round! Pick a Card</h2>
+          <div class="bonus-cards"></div>
+          <button class="close-bonus" style="display:none;">Close</button>
+        </div>
+      </div>
     </main>
   </div>
   

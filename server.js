@@ -51,6 +51,7 @@ app.use('/api/rewards', rewardsRoutes);
 app.use('/api/boosters', boostersRoutes);
 // Add slot spin endpoint
 app.post('/api/slot/spin', authMiddleware, slotController.spin);
+app.post('/api/slot/bonus', authMiddleware, slotController.claimBonus);
 
 // Serve frontend HTML files for each main page (no SPA fallback)
 const staticRoutes = [

@@ -150,6 +150,17 @@ header {
   border-radius: 10px;
 }
 
+/* Card spin animation for slot symbols */
+@keyframes card-spin {
+  0%   { transform: rotateY(0deg); }
+  80%  { transform: rotateY(360deg); }
+  100% { transform: rotateY(360deg); }
+}
+
+.reel-face.spinning {
+  animation: card-spin 0.5s linear;
+}
+
 .reel-symbol {
   max-width: 80%;
   max-height: 80%;
@@ -613,6 +624,71 @@ header {
 .avatar-save-btn:disabled {
   background: #555;
   cursor: not-allowed;
+}
+
+/* Bonus Modal - Added code */
+.bonus-modal {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(30, 0, 60, 0.85);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.bonus-content {
+  background: #222;
+  border-radius: 15px;
+  padding: 40px 30px;
+  text-align: center;
+  box-shadow: 0 0 40px #6e48aa;
+  color: #fff;
+}
+.bonus-cards {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin: 30px 0;
+}
+.bonus-card {
+  width: 120px;
+  height: 180px;
+  background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);
+  border-radius: 12px;
+  box-shadow: 0 0 20px #9d50bb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.bonus-card:hover {
+  transform: scale(1.08) rotate(-2deg);
+  box-shadow: 0 0 40px #4776e6;
+}
+.bonus-card.revealed {
+  background: #fff;
+  color: #6e48aa;
+  cursor: default;
+  box-shadow: 0 0 40px #4caf50;
+}
+.close-bonus {
+  margin-top: 20px;
+  padding: 10px 30px;
+  border-radius: 8px;
+  background: #6e48aa;
+  color: #fff;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.close-bonus:hover {
+  background: #9d50bb;
 }
 
 /* Responsive */

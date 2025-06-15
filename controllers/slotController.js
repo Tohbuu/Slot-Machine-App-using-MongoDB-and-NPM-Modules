@@ -1,225 +1,266 @@
 const User = require('../models/User');
 const Jackpot = require('../models/Jackpot');
-const jwt = require('jsonwebtoken');
-const Reward = require('../models/Reward');
 
-// Symbols and their multipliers
+// Symbol definitions with multipliers and types
 const SYMBOLS = [
-  { name: 'seven', multiplier: 10 },
-  { name: 'bar', multiplier: 8 },
-  { name: 'bell', multiplier: 6 },
-  { name: 'diamond', multiplier: 5 },
-  { name: 'horseshoe', multiplier: 4 },
-  { name: 'cherry', multiplier: 3 }
+  { name: 'seven', type: 'normal', multiplier: 100 },
+  { name: 'bar', type: 'normal', multiplier: 20 },
+  { name: 'bell', type: 'normal', multiplier: 10 },
+  { name: 'diamond', type: 'normal', multiplier: 5 },
+  { name: 'horseshoe', type: 'normal', multiplier: 3 },
+  { name: 'cherry', type: 'normal', multiplier: 2 },
+  { name: 'wild', type: 'wild', multiplier: 0 },
+  { name: 'scatter', type: 'scatter', multiplier: 0 }
 ];
 
-// Check for bonus rounds
-const checkBonus = (reels) => {
-  // Bonus if two sevens appear
-  const sevenCount = reels.filter(symbol => symbol === 'seven').length;
-  if (sevenCount >= 2) {
-    return { type: 'free_spins', amount: 3 };
-  }
-  
-  // Other bonus conditions can be added here
-  return null;
-};
+// Reel strips for each reel (classic slot style)
+const REEL_STRIPS = [
+  ['seven','bar','cherry','bell','diamond','horseshoe','wild','scatter','bar','cherry','bell','diamond','horseshoe','wild','scatter'],
+  ['bar','cherry','seven','bell','diamond','horseshoe','wild','scatter','bar','cherry','bell','diamond','horseshoe','wild','scatter'],
+  ['cherry','bar','bell','seven','diamond','horseshoe','wild','scatter','bar','cherry','bell','diamond','horseshoe','wild','scatter']
+];
 
-// Calculate winnings
-const calculateWinnings = (reels, betAmount) => {
-  let multiplier = 0;
-  
-  // All three symbols match
-  if (reels[0] === reels[1] && reels[1] === reels[2]) {
-    const symbol = SYMBOLS.find(s => s.name === reels[0]);
-    multiplier = symbol ? symbol.multiplier : 0;
-  } 
-  // At least one cherry
-  else if (reels.some(symbol => symbol === 'cherry')) {
-    multiplier = 1;
-  }
-  
-  return betAmount * multiplier;
-};
+// 10 paylines (add more as needed)
+const PAYLINES = [
+  [ [0,0], [0,1], [0,2] ], // 1: Top row
+  [ [1,0], [1,1], [1,2] ], // 2: Middle row
+  [ [2,0], [2,1], [2,2] ], // 3: Bottom row
+  [ [0,0], [1,1], [2,2] ], // 4: Diagonal TL-BR
+  [ [2,0], [1,1], [0,2] ], // 5: Diagonal BL-TR
+  [ [0,0], [0,1], [1,2] ], // 6: V shape top left
+  [ [2,0], [2,1], [1,2] ], // 7: V shape bottom left
+  [ [1,0], [0,1], [1,2] ], // 8: Up arrow
+  [ [1,0], [2,1], [1,2] ], // 9: Down arrow
+  [ [0,0], [1,1], [0,2] ]  // 10: Zigzag top
+];
 
-// Check for jackpot win (0.1% chance)
-const checkJackpot = async (userId, betAmount) => {
-  if (Math.random() < 0.001) { // 0.1% chance
-    const jackpot = await Jackpot.getCurrent();
-    const winAmount = jackpot.currentAmount;
-    
-    // Update user balance
-    await User.findByIdAndUpdate(userId, {
-      $inc: { balance: winAmount, jackpotsWon: 1 },
-      $push: { achievements: { name: 'Jackpot Winner', date: new Date() } }
-    });
-    
-    // Reset jackpot
-    jackpot.currentAmount = 10000;
-    jackpot.lastWinner = userId;
-    jackpot.lastWinAmount = winAmount;
-    jackpot.lastWinDate = new Date();
-    await jackpot.save();
-    
-    return winAmount;
-  }
-  return 0;
-};
-
-// Main spin function
-exports.spin = async (req, res) => {
-  try {
-    const { betAmount } = req.body;
-    const user = req.user;
-    
-    // Check balance
-    if (user.balance < betAmount && user.freeSpins <= 0) {
-      return res.status(400).json({ error: 'Insufficient balance' });
+// Spin using reel strips
+function spinReels() {
+  const grid = [[],[],[]];
+  for (let col = 0; col < 3; col++) {
+    const strip = REEL_STRIPS[col];
+    const stop = Math.floor(Math.random() * strip.length);
+    for (let row = 0; row < 3; row++) {
+      grid[row][col] = strip[(stop + row) % strip.length];
     }
-    
-    // Deduct bet amount (unless free spin)
-    let usingFreeSpin = user.freeSpins > 0;
-    if (!usingFreeSpin) {
-      user.balance -= betAmount;
-      
-      // Add to jackpot
-      const jackpot = await Jackpot.getCurrent();
-      const contribution = betAmount * jackpot.contributionRate;
-      jackpot.currentAmount += contribution;
-      await jackpot.save();
-    } else {
-      user.freeSpins -= 1;
-    }
-    
-    // Generate random result
-    const result = [
-      SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)].name,
-      SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)].name,
-      SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)].name
-    ];
-    
-    // Calculate winnings
-    const winnings = calculateWinnings(result, betAmount);
-    user.balance += winnings;
-    
-    // Check for jackpot
-    const jackpotWin = await checkJackpot(user._id, betAmount);
-    
-    // Check for bonus
-    const bonus = checkBonus(result);
-    if (bonus && bonus.type === 'free_spins') {
-      user.freeSpins += bonus.amount;
-    }
-    
-    // Add experience
-    user.experience += 10;
+  }
+  return grid;
+}
 
-    let leveledUp = false;
-    let levelUpRewards = [];
-    let notification = null;
+// Check paylines for wins (left to right, wilds substitute)
+function checkPaylines(grid, betPerLine, activePaylines) {
+  let totalWin = 0;
+  let jackpotWin = false;
+  let paylineResults = [];
 
-    // Check for level up (support multiple levels at once)
-    while (user.experience >= 100) {
-      user.level += 1;
-      user.experience -= 100;
-      leveledUp = true;
+  for (let i = 0; i < activePaylines.length; i++) {
+    const paylineIdx = activePaylines[i];
+    const payline = PAYLINES[paylineIdx];
+    let symbols = payline.map(([r, c]) => grid[r][c]);
+    let matchSymbol = null;
+    let matchCount = 0;
+    let wildCount = 0;
 
-      // Grant level-up rewards
-      const rewardsForLevel = await Reward.findOne({ level: user.level });
-      if (rewardsForLevel && !user.claimedRewards.includes(rewardsForLevel._id)) {
-        // Booster effect: double rewards if user has an active booster
-        let multiplier = 1;
-        if (user.activeBoosters && user.activeBoosters.length > 0) {
-          // Example: double credits, double booster packs, etc.
-          multiplier = 2;
-        }
-
-        // Apply credits
-        if (rewardsForLevel.rewards.credits) {
-          user.balance += rewardsForLevel.rewards.credits * multiplier;
-        }
-
-        // Apply booster packs
-        if (rewardsForLevel.rewards.boosterPacks && rewardsForLevel.rewards.boosterPacks.length > 0) {
-          rewardsForLevel.rewards.boosterPacks.forEach(pack => {
-            for (let i = 0; i < (pack.quantity * multiplier); i++) {
-              user.activeBoosters.push({
-                pack: pack.pack,
-                effects: {}, // You can populate effects if needed
-                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
-              });
-            }
-          });
-        }
-
-        // Apply unlocks
-        if (rewardsForLevel.rewards.unlocks && rewardsForLevel.rewards.unlocks.length > 0) {
-          if (!user.unlocks) user.unlocks = [];
-          user.unlocks.push(...rewardsForLevel.rewards.unlocks);
-        }
-
-        // Mark reward as claimed
-        user.claimedRewards.push(rewardsForLevel._id);
-
-        // Collect for notification
-        levelUpRewards.push({
-          level: user.level,
-          rewards: rewardsForLevel.rewards,
-          multiplier
-        });
+    // Find first non-wild, non-scatter symbol as base
+    for (const sym of symbols) {
+      if (sym !== 'wild' && sym !== 'scatter') {
+        matchSymbol = sym;
+        break;
       }
     }
-    
-    await user.save();
+    if (!matchSymbol) continue;
 
-    if (leveledUp && levelUpRewards.length > 0) {
-      notification = {
-        type: 'level-up',
-        message: `Congratulations! You reached level ${user.level} and received rewards!`,
-        rewards: levelUpRewards
-      };
+    // Count matches (wilds substitute)
+    for (const sym of symbols) {
+      if (sym === matchSymbol || sym === 'wild') {
+        matchCount++;
+        if (sym === 'wild') wildCount++;
+      } else break;
     }
+
+    // Payout for 2+ matches
+    if (matchCount >= 2) {
+      const symbolObj = SYMBOLS.find(s => s.name === matchSymbol);
+      let payout = betPerLine * (symbolObj ? symbolObj.multiplier : 0) * (matchCount - 1);
+      // Wild multiplier: 2x for each wild in the win
+      if (wildCount > 0) payout *= Math.pow(2, wildCount);
+      totalWin += payout;
+      paylineResults.push({ payline: paylineIdx + 1, symbol: matchSymbol, count: matchCount, payout });
+
+      // Progressive jackpot: 3x seven on payline 1 (top row, no wilds)
+      if (paylineIdx === 0 && matchSymbol === 'seven' && matchCount === 3 && wildCount === 0) {
+        jackpotWin = true;
+      }
+    }
+  }
+  return { totalWin, paylineResults, jackpotWin };
+}
+
+// Count scatters anywhere
+function countScatters(grid) {
+  return grid.flat().filter(sym => sym === 'scatter').length;
+}
+
+// Main spin endpoint
+exports.spin = async (req, res) => {
+  try {
+    let { betPerLine, paylines } = req.body;
+    betPerLine = Math.max(1, Math.min(100, betPerLine || 1));
+    paylines = Array.isArray(paylines) && paylines.length ? paylines : Array.from({length: PAYLINES.length}, (_, i) => i);
+    paylines = paylines.filter(i => i >= 0 && i < PAYLINES.length);
+
+    const user = req.user;
+    const totalBet = betPerLine * paylines.length;
+
+    // Check balance
+    if (user.balance < totalBet && user.freeSpins <= 0) {
+      return res.status(400).json({ error: 'Insufficient balance' });
+    }
+
+    // Deduct bet (unless free spin)
+    let usingFreeSpin = user.freeSpins > 0;
+    if (!usingFreeSpin) user.balance -= totalBet;
+    else user.freeSpins--;
+
+    // Jackpot contribution
+    const jackpot = await Jackpot.getCurrent();
+    const contribution = Math.floor(totalBet * (jackpot.contributionRate || 0.01));
+    jackpot.currentAmount += contribution;
+
+    // Spin reels
+    const grid = spinReels();
+
+    // Check paylines
+    const { totalWin, paylineResults, jackpotWin } = checkPaylines(grid, betPerLine, paylines);
+
+    let bonusRound = false;
+    let bonusData = null;
+
+    // Handle scatters and trigger bonus
+    const scatterCount = countScatters(grid);
+    let scatterWin = 0, freeSpinsAwarded = 0;
+    if (scatterCount >= 3) {
+      scatterWin = totalBet * 5;
+      freeSpinsAwarded = 5;
+      user.freeSpins += freeSpinsAwarded;
+      // Trigger bonus round
+      bonusRound = true;
+      // Example: 3 cards, one is a big win, others are small wins
+      bonusData = [
+        { label: "Big Win", amount: totalBet * 20 },
+        { label: "Medium Win", amount: totalBet * 10 },
+        { label: "Small Win", amount: totalBet * 5 }
+      ];
+      // Shuffle bonusData for fairness
+      bonusData = bonusData.sort(() => Math.random() - 0.5);
+    }
+
+    // Add winnings
+    user.balance += totalWin + scatterWin;
+
+    // Handle jackpot
+    let jackpotAmount = 0;
+    if (jackpotWin) {
+      jackpotAmount = jackpot.currentAmount;
+      user.balance += jackpotAmount;
+      jackpot.currentAmount = 10000;
+      jackpot.lastWinner = user._id;
+      jackpot.lastWinAmount = jackpotAmount;
+      jackpot.lastWinDate = new Date();
+      user.jackpotsWon = (user.jackpotsWon || 0) + 1;
+    }
+
+    await jackpot.save();
+    await user.save();
 
     res.json({
       success: true,
-      result,
-      winnings,
+      grid,
+      paylineResults,
+      scatterCount,
+      scatterWin,
+      freeSpinsAwarded,
       jackpotWin,
-      bonus,
+      jackpotAmount,
       newBalance: user.balance,
       freeSpins: user.freeSpins,
-      level: user.level,
-      experience: user.experience,
-      usingFreeSpin,
-      notification // <-- send notification to frontend
+      bonusRound,
+      bonusData
     });
-    
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });
   }
 };
 
-// Get jackpot info
-exports.getJackpot = async (req, res) => {
+// Bonus claim endpoint
+exports.claimBonus = async (req, res) => {
   try {
-    const jackpot = await Jackpot.getCurrent();
-    res.json({ success: true, jackpot });
+    const { pickIndex, betPerLine, paylines } = req.body;
+    const user = req.user;
+    const totalBet = betPerLine * paylines.length;
+
+    // Define the same bonusData as above
+    let bonusData = [
+      { label: "Big Win", amount: totalBet * 20 },
+      { label: "Medium Win", amount: totalBet * 10 },
+      { label: "Small Win", amount: totalBet * 5 }
+    ];
+    bonusData = bonusData.sort(() => Math.random() - 0.5);
+
+    const picked = bonusData[pickIndex];
+    user.balance += picked.amount;
+    await user.save();
+
+    res.json({
+      success: true,
+      bonusResult: picked,
+      newBalance: user.balance
+    });
   } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).json({ error: 'Bonus claim failed' });
   }
 };
 
-// Get leaderboard
-exports.getLeaderboard = async (req, res) => {
-  try {
-    const topPlayers = await User.find()
-      .sort({ totalWins: -1 })
-      .limit(10)
-      .select('username profilePicture totalWins jackpotsWon level');
-      
-    res.json({ success: true, topPlayers });
-  } catch (err) {
-    res.status(500).json({ error: 'Server error' });
+// RTP Simulation
+async function simulateRTP(spins = 1000000, betPerLine = 10, paylines = Array.from({length: PAYLINES.length}, (_, i) => i)) {
+  let totalBet = 0;
+  let totalPayout = 0;
+  let jackpotHits = 0;
+  let jackpotAmount = 10000;
+  let jackpotPool = jackpotAmount;
+  let jackpotContributionRate = 0.01;
+
+  for (let i = 0; i < spins; i++) {
+    const bet = betPerLine * paylines.length;
+    totalBet += bet;
+    jackpotPool += Math.floor(bet * jackpotContributionRate);
+
+    const grid = spinReels();
+    const { totalWin, jackpotWin } = checkPaylines(grid, betPerLine, paylines);
+
+    let scatterCount = countScatters(grid);
+    let scatterWin = 0;
+    if (scatterCount >= 3) {
+      scatterWin = bet * 5;
+    }
+
+    let payout = totalWin + scatterWin;
+
+    if (jackpotWin) {
+      payout += jackpotPool;
+      jackpotHits++;
+      jackpotPool = jackpotAmount;
+    }
+
+    totalPayout += payout;
   }
-};
+
+  console.log(`Simulated Spins: ${spins}`);
+  console.log(`Total Bet: ${totalBet}`);
+  console.log(`Total Payout: ${totalPayout}`);
+  console.log(`RTP: ${(totalPayout / totalBet * 100).toFixed(2)}%`);
+  console.log(`Jackpot Hits: ${jackpotHits}`);
+}
+
+simulateRTP();
