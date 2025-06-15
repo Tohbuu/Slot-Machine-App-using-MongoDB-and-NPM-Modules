@@ -39,24 +39,36 @@ const userSingleRoutes = require('./routes/user');
 const slotController = require('./controllers/slotController');
 const authMiddleware = require('./middleware/auth');
 
+const rewardsRoutes = require('./routes/rewards');
+const boostersRoutes = require('./routes/boosters');
+
 app.use('/api/auth', authRoutes);  // Authentication routes (login, register)
 app.use('/api/users', userRoutes); // User profile routes
 app.use('/api/slots', slotRoutes); // Slot game routes
 app.use('/api/user', userSingleRoutes);
+
+app.use('/api/rewards', rewardsRoutes);
+app.use('/api/boosters', boostersRoutes);
 // Add slot spin endpoint
 app.post('/api/slot/spin', authMiddleware, slotController.spin);
 
-// Serve frontend HTML files for SPA
+// Serve frontend HTML files for each main page (no SPA fallback)
 const staticRoutes = [
   { route: '/', file: 'index.html' },
   { route: '/login', file: 'login.html' },
   { route: '/register', file: 'register.html' },
   { route: '/profile', file: 'profile.html' },
-  { route: '/leaderboard', file: 'leaderboard.html' }
+  { route: '/leaderboard', file: 'leaderboard.html' },
+  { route: '/boosters', file: 'boosters.html' },
+  { route: '/rewards', file: 'rewards.html' }
 ];
 
 staticRoutes.forEach(({ route, file }) => {
   app.get(route, (req, res) => {
+    res.sendFile(path.join(__dirname, 'views', file));
+  });
+  // Also handle trailing slash
+  app.get(route + '/', (req, res) => {
     res.sendFile(path.join(__dirname, 'views', file));
   });
 });
@@ -72,7 +84,7 @@ app.get('/logout', (req, res) => {
   });
 });
 
-// Error handling for undefined routes
+// Error handling for undefined routes (keep this last)
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });
 });

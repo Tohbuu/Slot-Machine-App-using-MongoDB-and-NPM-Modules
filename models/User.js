@@ -54,6 +54,26 @@ const UserSchema = new mongoose.Schema({
   jackpotsWon: {
     type: Number,
     default: 0
+  },
+  claimedRewards: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Reward'
+  }],
+  activeBoosters: [{
+    pack: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'BoosterPack'
+    },
+    effects: Object,
+    expiresAt: Date
+  }],
+  buyCoinsCount: {
+    type: Number,
+    default: 0
+  },
+  buyCoinsReset: {
+    type: Date,
+    default: () => new Date()
   }
 }, { timestamps: true });
 

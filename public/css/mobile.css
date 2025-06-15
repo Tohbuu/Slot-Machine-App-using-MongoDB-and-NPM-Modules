@@ -1,0 +1,24 @@
+@media (max-width: 768px) {
+  /* Boosters */
+  .packs-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .boosters-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  /* Rewards */
+  .rewards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .reward-card {
+    padding: 10px;
+  }
+  
+  /* General */
+  .section-header h2 {
+    font-size: 1.3rem;
+  }
+}

@@ -6,14 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchUserData();
 });
 
-function fetchLeaderboard() {
-  fetch('/api/slots/leaderboard')
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        renderLeaderboard(data.topPlayers);
-      }
-    });
+// Fetch leaderboard
+async function fetchLeaderboard() {
+  const token = localStorage.getItem('token');
+  const res = await fetch('/api/slots/leaderboard', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return; // handle error
+  const leaderboard = await res.json();
+  renderLeaderboard(leaderboard.topPlayers);
 }
 
 function fetchUserData() {

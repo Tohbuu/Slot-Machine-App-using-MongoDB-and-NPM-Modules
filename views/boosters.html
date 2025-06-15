@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booster Packs - Neon Spin</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components/boosters.css">
+  
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">NEON SPIN</div>
+      <nav class="nav-menu">
+        <a href="/" class="nav-link">Play</a>
+        <a href="/boosters" class="nav-link active">Boosters</a>
+        <a href="/rewards" class="nav-link">Rewards</a>
+        <a href="/profile" class="nav-link">Profile</a>
+        <a href="/logout" class="nav-link">Logout</a>
+        <a href="/leaderboard" class="nav-link">Leaderboard</a>
+      </nav>
+      <div class="user-info">
+        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+        <span class="balance">Balance: <span class="balance-amount">0</span></span>
+      </div>
+    </header>
+    <main>
+      <section class="booster-section" id="booster-section">
+        <div class="section-header">
+          <h2><i class="fas fa-rocket"></i> BOOSTER PACKS</h2>
+          <div class="balance-display">
+            <span class="credits">Credits: <span id="booster-balance">0</span></span>
+          </div>
+        </div>
+
+        <!-- Buy Coins Section -->
+        <div class="buy-coins-section" style="margin-bottom: 30px;">
+          <div class="pack-card buy-coins-card">
+            <div class="pack-header">
+              <img src="/images/boosters/coins.png" alt="Buy Coins">
+              <span class="pack-name">Buy Coins</span>
+            </div>
+            <div class="pack-effects">
+              <input type="number" min="10" max="100000" step="10" value="1000" class="buy-coins-input" style="width: 80%; padding: 5px; border-radius: 5px;">
+              <button class="btn-buy-coins" style="margin-top:10px;width:100%;">Buy Coins</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="packs-container" id="packs-container">
+          <!-- Booster packs will be loaded here -->
+        </div>
+
+        <div class="active-boosters">
+          <h3><i class="fas fa-bolt"></i> ACTIVE BOOSTERS</h3>
+          <div class="boosters-grid" id="active-boosters">
+            <div class="empty-state">
+              <i class="fas fa-box-open"></i>
+              <p>No active boosters</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
+  <script src="/js/boosters.js"></script>
+</body>
+</html>

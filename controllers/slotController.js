@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Jackpot = require('../models/Jackpot');
 const jwt = require('jsonwebtoken');
+const Reward = require('../models/Reward');
 
 // Symbols and their multipliers
 const SYMBOLS = [
@@ -112,20 +113,73 @@ exports.spin = async (req, res) => {
     
     // Add experience
     user.experience += 10;
-    
-    // Check for level up
-    if (user.experience >= 100) {
+
+    let leveledUp = false;
+    let levelUpRewards = [];
+    let notification = null;
+
+    // Check for level up (support multiple levels at once)
+    while (user.experience >= 100) {
       user.level += 1;
-      user.experience = 0;
-    }
-    
-    // Update total wins
-    if (winnings > 0 || jackpotWin > 0) {
-      user.totalWins += (winnings + jackpotWin);
+      user.experience -= 100;
+      leveledUp = true;
+
+      // Grant level-up rewards
+      const rewardsForLevel = await Reward.findOne({ level: user.level });
+      if (rewardsForLevel && !user.claimedRewards.includes(rewardsForLevel._id)) {
+        // Booster effect: double rewards if user has an active booster
+        let multiplier = 1;
+        if (user.activeBoosters && user.activeBoosters.length > 0) {
+          // Example: double credits, double booster packs, etc.
+          multiplier = 2;
+        }
+
+        // Apply credits
+        if (rewardsForLevel.rewards.credits) {
+          user.balance += rewardsForLevel.rewards.credits * multiplier;
+        }
+
+        // Apply booster packs
+        if (rewardsForLevel.rewards.boosterPacks && rewardsForLevel.rewards.boosterPacks.length > 0) {
+          rewardsForLevel.rewards.boosterPacks.forEach(pack => {
+            for (let i = 0; i < (pack.quantity * multiplier); i++) {
+              user.activeBoosters.push({
+                pack: pack.pack,
+                effects: {}, // You can populate effects if needed
+                expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000)
+              });
+            }
+          });
+        }
+
+        // Apply unlocks
+        if (rewardsForLevel.rewards.unlocks && rewardsForLevel.rewards.unlocks.length > 0) {
+          if (!user.unlocks) user.unlocks = [];
+          user.unlocks.push(...rewardsForLevel.rewards.unlocks);
+        }
+
+        // Mark reward as claimed
+        user.claimedRewards.push(rewardsForLevel._id);
+
+        // Collect for notification
+        levelUpRewards.push({
+          level: user.level,
+          rewards: rewardsForLevel.rewards,
+          multiplier
+        });
+      }
     }
     
     await user.save();
-    
+
+    if (leveledUp && levelUpRewards.length > 0) {
+      notification = {
+        type: 'level-up',
+        message: `Congratulations! You reached level ${user.level} and received rewards!`,
+        rewards: levelUpRewards
+      };
+    }
+
     res.json({
       success: true,
       result,
@@ -136,7 +190,8 @@ exports.spin = async (req, res) => {
       freeSpins: user.freeSpins,
       level: user.level,
       experience: user.experience,
-      usingFreeSpin
+      usingFreeSpin,
+      notification // <-- send notification to frontend
     });
     
   } catch (err) {

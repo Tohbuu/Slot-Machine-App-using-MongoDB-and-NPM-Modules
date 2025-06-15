@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neon Spin - Futuristic Slot Machine</title>
+  <title>Level Rewards - Neon Spin</title>
   <link rel="stylesheet" href="/css/style.css">
-  <link rel="stylesheet" href="/css/themes.css">
-  <link rel="stylesheet" href="/css/mobile.css">
+  <link rel="stylesheet" href="/css/components/rewards.css">
+  
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -16,40 +16,34 @@
       <nav class="nav-menu">
         <a href="/" class="nav-link">Play</a>
         <a href="/boosters" class="nav-link">Boosters</a>
-        <a href="/rewards" class="nav-link">Rewards</a>
+        <a href="/rewards" class="nav-link active">Rewards</a>
         <a href="/profile" class="nav-link">Profile</a>
         <a href="/logout" class="nav-link">Logout</a>
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
       </nav>
       <div class="user-info">
+        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
         <span class="balance">Balance: <span class="balance-amount">0</span></span>
       </div>
     </header>
-    
     <main>
-      <section class="slot-machine content-section active" id="game-section">
-        <div class="reels-container">
-          <!-- Reels will be inserted here by JavaScript -->
-        </div>
-        <div class="controls">
-          <div class="bet-controls">
-            <button class="bet-btn bet-decrease">-</button>
-            <span class="bet-amount">10</span>
-            <button class="bet-btn bet-increase">+</button>
-            <button class="bet-btn bet-max">MAX</button>
+      <section class="rewards-section" id="rewards-section">
+        <div class="section-header">
+          <h2><i class="fas fa-trophy"></i> LEVEL REWARDS</h2>
+          <div class="progress-tracker">
+            <span>Level <span id="current-level">1</span>/20</span>
+            <div class="progress-bar">
+              <div class="progress-fill" id="level-progress"></div>
+            </div>
           </div>
-          <button class="spin-btn">SPIN</button>
-          <div class="result-display"></div>
+        </div>
+        <div class="rewards-grid" id="rewards-grid">
+          <!-- Rewards will be loaded here -->
         </div>
       </section>
-
-      
     </main>
   </div>
-  
-  <script src="/js/slot-machine.js"></script>
-  <script src="/js/boosters.js"></script>
+  <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
   <script src="/js/rewards.js"></script>
-  
 </body>
 </html>

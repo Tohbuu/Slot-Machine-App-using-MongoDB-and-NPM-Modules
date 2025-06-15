@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize the game
   function initGame() {
     // Fetch user data
-    fetch('/api/user', {
+    fetch('/api/users/me', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('token')}`
       }
@@ -144,6 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
           playWinAnimation();
         } else {
           showResult('No win this time. Try again!', false);
+        }
+        
+        if (data.notification && data.notification.type === 'level-up') {
+          showLevelUpNotification(data.notification);
         }
       } else {
         showResult(data.message || 'Spin failed', false);
@@ -287,5 +291,21 @@ document.addEventListener('DOMContentLoaded', () => {
   
   function updateBalanceDisplay() {
     balanceDisplay.textContent = balance;
+  }
+  
+  function showLevelUpNotification(notification) {
+    // You can use a modal, or for demo, use alert:
+    let msg = notification.message + '\n';
+    notification.rewards.forEach(r => {
+      msg += `Level ${r.level} Rewards:\n`;
+      if (r.rewards.credits) msg += `+${r.rewards.credits * r.multiplier} Credits\n`;
+      if (r.rewards.boosterPacks && r.rewards.boosterPacks.length > 0) {
+        msg += `+${r.rewards.boosterPacks.map(bp => (bp.quantity * r.multiplier) + 'x Booster Pack').join(', ')}\n`;
+      }
+      if (r.rewards.unlocks && r.rewards.unlocks.length > 0) {
+        msg += `Unlocks: ${r.rewards.unlocks.join(', ')}\n`;
+      }
+    });
+    alert(msg);
   }
 });

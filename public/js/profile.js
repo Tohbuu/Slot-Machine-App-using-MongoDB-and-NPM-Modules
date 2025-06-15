@@ -7,8 +7,63 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Fetch user profile
+async function fetchProfile() {
+  const token = localStorage.getItem('token');
+  const res = await fetch('/api/users/me', {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  if (!res.ok) return; // handle error
+  const user = await res.json();
+  updateProfileDisplay(user);
+}
+
+// Update profile
+async function updateProfile(data) {
+  const token = localStorage.getItem('token');
+  const res = await fetch('/api/users', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(data)
+  });
+  const result = await res.json();
+  if (result.success) {
+    showMessage('Profile updated successfully!', true);
+    updateProfileDisplay(result.user);
+  } else {
+    showMessage(result.message || 'Update failed', false);
+  }
+}
+
+// Update theme
+async function updateTheme(theme) {
+  const token = localStorage.getItem('token');
+  const res = await fetch('/api/users/theme', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify({ theme })
+  });
+  const result = await res.json();
+  if (result.success) {
+    // Update active theme indicator
+    document.querySelectorAll('.theme-option').forEach(option => {
+      option.classList.remove('active');
+    });
+    document.querySelector(`.theme-option[data-theme="${theme}"]`).classList.add('active');
+    
+    // Apply theme to the page
+    applyTheme(theme);
+  }
+}
+
 function loadProfile() {
-  fetch('/api/user', {
+  fetch('/api/users/me', {
     headers: {
       'Authorization': `Bearer ${localStorage.getItem('token')}`
     }
@@ -89,31 +144,15 @@ function handleProfileUpdate(e) {
   submitBtn.disabled = true;
   submitBtn.textContent = 'Saving...';
   
-  fetch('/api/user/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    },
-    body: JSON.stringify(formData)
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      showMessage('Profile updated successfully!', true);
-      updateProfileDisplay(data.user);
-    } else {
-      showMessage(data.message || 'Update failed', false);
-    }
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalText;
-  })
-  .catch(error => {
-    console.error('Error:', error);
-    showMessage('Connection error', false);
-    submitBtn.disabled = false;
-    submitBtn.textContent = originalText;
-  });
+  updateProfile(formData)
+    .then(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    })
+    .catch(() => {
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    });
 }
 
 function setupThemeSelector() {
@@ -123,33 +162,6 @@ function setupThemeSelector() {
       const theme = option.dataset.theme;
       updateTheme(theme);
     });
-  });
-}
-
-function updateTheme(theme) {
-  fetch('/api/user/update', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    },
-    body: JSON.stringify({ theme })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.success) {
-      // Update active theme indicator
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-      });
-      document.querySelector(`.theme-option[data-theme="${theme}"]`).classList.add('active');
-      
-      // Apply theme to the page
-      applyTheme(theme);
-    }
-  })
-  .catch(error => {
-    console.error('Error:', error);
   });
 }
 
@@ -318,3 +330,6 @@ function showMessage(message, isSuccess) {
     }, 300);
   }, 3000);
 }
+
+// Initial profile load
+fetchProfile();
