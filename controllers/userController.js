@@ -86,3 +86,61 @@ exports.uploadAvatar = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+// Cash out to bank
+exports.cashoutToBank = async (req, res) => {
+  try {
+    const { amount } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!amount || amount <= 0) {
+      return res.status(400).json({ success: false, error: 'Invalid amount' });
+    }
+    if (user.balance < amount) {
+      return res.status(400).json({ success: false, error: 'Insufficient balance' });
+    }
+
+    user.balance -= amount;
+    user.bankBalance = (user.bankBalance || 0) + amount;
+    await user.save();
+
+    res.json({ success: true, newBalance: user.balance, bankBalance: user.bankBalance });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Cashout failed' });
+  }
+};
+
+// Get bank balance
+exports.getBankBalance = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.json({ success: true, bankBalance: user.bankBalance || 0 });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Failed to fetch bank balance' });
+  }
+};
+
+// Get current user data
+exports.getMe = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('-password -__v');
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+    res.json({
+      success: true,
+      user: {
+        username: user.username,
+        email: user.email,
+        balance: user.balance,
+        bankBalance: user.bankBalance,
+        profilePicture: user.profilePicture,
+        level: user.level,
+        experience: user.experience,
+        // ...other fields
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
+};

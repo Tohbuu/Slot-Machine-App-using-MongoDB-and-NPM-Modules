@@ -8,6 +8,7 @@
   <link rel="stylesheet" href="/css/themes.css">
   <link rel="stylesheet" href="/css/mobile.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <script type="module" src="/js/theme.js"></script>
 </head>
 <body>
   <div class="container">
@@ -22,6 +23,7 @@
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
       </nav>
       <div class="user-info">
+        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
         <span class="balance">Balance: <span class="balance-amount">0</span></span>
       </div>
     </header>
@@ -64,6 +66,16 @@
           <div class="bonus-cards"></div>
           <button class="close-bonus" style="display:none;">Close</button>
         </div>
+      </div>
+
+      <div class="bank-section">
+        <h3>Bank</h3>
+        <div>
+          <span>Bank Balance: <span class="bank-balance">0</span></span>
+        </div>
+        <input type="number" min="1" class="cashout-amount" placeholder="Amount to cash out">
+        <button class="cashout-btn">Cash Out</button>
+        <div class="cashout-result"></div>
       </div>
     </main>
   </div>

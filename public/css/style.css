@@ -9,6 +9,11 @@
   --warning-color: #ff9800;
   --info-color: #2196f3;
   --neon-glow: 0 0 10px rgba(110, 72, 170, 0.8), 0 0 20px rgba(110, 72, 170, 0.6), 0 0 30px rgba(110, 72, 170, 0.4);
+  --background: #0f0f1a;
+  --text: #eaeaea;
+  --primary: #6e48aa;
+  --secondary: #9d50bb;
+  --accent: #4776e6;
 }
 
 * {
@@ -19,8 +24,8 @@
 }
 
 body {
-  background-color: var(--dark-color);
-  color: var(--light-color);
+  background-color: var(--background);
+  color: var(--text);
   min-height: 100vh;
   background-image: 
     radial-gradient(circle at 10% 20%, rgba(71, 119, 230, 0.1) 0%, transparent 20%),

@@ -43,7 +43,7 @@ const rewardsRoutes = require('./routes/rewards');
 const boostersRoutes = require('./routes/boosters');
 
 app.use('/api/auth', authRoutes);  // Authentication routes (login, register)
-app.use('/api/users', userRoutes); // User profile routes
+app.use('/api/users', userRoutes); // userRoutes from routes/users.js
 app.use('/api/slots', slotRoutes); // Slot game routes
 app.use('/api/user', userSingleRoutes);
 

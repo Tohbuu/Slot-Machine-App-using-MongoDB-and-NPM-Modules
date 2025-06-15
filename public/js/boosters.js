@@ -2,15 +2,15 @@ class BoosterManager {
   constructor() {
     this.packsContainer = document.getElementById('packs-container');
     this.activeBoostersEl = document.getElementById('active-boosters');
-    this.balanceEl = document.getElementById('booster-balance');
+    this.bankBalanceEl = document.getElementById('booster-bank-balance');
     this.init();
   }
 
   async init() {
     await this.loadBoosters();
     await this.loadActiveBoosters();
-    this.updateBalance();
-    setInterval(() => this.checkExpiredBoosters(), 60000); // Check every minute
+    this.updateBankBalance();
+    setInterval(() => this.checkExpiredBoosters(), 60000);
   }
 
   async loadBoosters() {
@@ -85,7 +85,7 @@ class BoosterManager {
     const packId = e.target.dataset.id;
     const price = parseInt(e.target.dataset.price);
     
-    if (!confirm(`Purchase this booster for ${price} credits?`)) return;
+    if (!confirm(`Purchase this booster for ${price} credits from your bank?`)) return;
     
     try {
       const response = await fetch('/api/boosters/purchase', {
@@ -101,7 +101,7 @@ class BoosterManager {
       
       if (result.success) {
         alert('Booster activated successfully!');
-        this.updateBalance(result.newBalance);
+        this.bankBalanceEl.textContent = result.newBankBalance;
         this.loadActiveBoosters();
         this.loadBoosters(); // Refresh list
       } else {
@@ -157,18 +157,17 @@ class BoosterManager {
     `).join('');
   }
 
-  async updateBalance() {
+  async updateBankBalance() {
     try {
-      const response = await fetch('/api/user', {
-        headers: { 
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+      const response = await fetch('/api/users/bank', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      
-      const { user } = await response.json();
-      this.balanceEl.textContent = user.balance;
+      const data = await response.json();
+      if (data.success) {
+        this.bankBalanceEl.textContent = data.bankBalance;
+      }
     } catch (err) {
-      console.error('Balance update failed:', err);
+      console.error('Bank balance update failed:', err);
     }
   }
 
@@ -196,9 +195,9 @@ function updateHeaderUserInfo() {
       }
     });
 }
+
 document.addEventListener('DOMContentLoaded', updateHeaderUserInfo);
 
-// Initialize when DOM loads
 document.addEventListener('DOMContentLoaded', () => {
   if (document.getElementById('booster-section')) {
     new BoosterManager();

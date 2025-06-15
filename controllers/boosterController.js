@@ -40,15 +40,16 @@ exports.purchaseBooster = async (req, res) => {
       });
     }
 
-    if (user.balance < pack.price) {
+    // Use only bankBalance for booster purchases
+    if (user.bankBalance < pack.price) {
       return res.status(400).json({
         success: false,
-        error: 'Insufficient credits'
+        error: 'Insufficient bank balance (cash out more from slot winnings)'
       });
     }
 
     // Process purchase
-    user.balance -= pack.price;
+    user.bankBalance -= pack.price;
     user.activeBoosters.push({
       pack: pack._id,
       effects: pack.effects,
@@ -59,7 +60,7 @@ exports.purchaseBooster = async (req, res) => {
 
     res.json({
       success: true,
-      newBalance: user.balance,
+      newBankBalance: user.bankBalance,
       activeBoosters: user.activeBoosters
     });
 

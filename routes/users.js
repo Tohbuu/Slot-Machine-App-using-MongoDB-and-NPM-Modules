@@ -23,4 +23,12 @@ router.get('/me', auth, (req, res) => {
   res.json({ success: true, user: req.user });
 });
 
+// @route   POST /api/users/cashout
+// @desc    Cash out to bank
+router.post('/cashout', auth, userController.cashoutToBank);
+
+// @route   GET /api/users/bank
+// @desc    Get bank balance
+router.get('/bank', auth, userController.getBankBalance);
+
 module.exports = router;

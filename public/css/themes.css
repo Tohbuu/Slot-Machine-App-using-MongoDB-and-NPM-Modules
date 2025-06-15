@@ -22,6 +22,17 @@
   --card-border: rgba(0, 210, 255, 0.3);
 }
 
+/* Neon Theme */
+.theme-neon {
+  --primary: #39ff14;
+  --secondary: #a500ff;
+  --background: #232526;
+  --text: #ffffff;
+  --accent: #ff007f;
+  --card-bg: rgba(35, 37, 38, 0.9);
+  --card-border: rgba(57, 255, 20, 0.3);
+}
+
 /* Dark Mode */
 .theme-dark {
   --primary: #333333;
@@ -37,6 +48,7 @@
 body {
   background-color: var(--background);
   color: var(--text);
+  /* ...other styles... */
 }
 
 .card {

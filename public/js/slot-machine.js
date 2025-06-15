@@ -9,6 +9,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const decreaseBetBtn = document.querySelector('.bet-decrease');
   const maxBetBtn = document.querySelector('.bet-max');
   const paylineCheckboxes = document.querySelectorAll('.payline-checkbox');
+  const bankBalanceDisplay = document.querySelector('.bank-balance');
+  const cashoutAmountInput = document.querySelector('.cashout-amount');
+  const cashoutBtn = document.querySelector('.cashout-btn');
+  const cashoutResult = document.querySelector('.cashout-result');
 
   // Game State
   let balance = 0;
@@ -40,6 +44,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const bonusModal = document.getElementById('bonus-modal');
   const bonusCardsContainer = bonusModal.querySelector('.bonus-cards');
   const closeBonusBtn = bonusModal.querySelector('.close-bonus');
+
+  if (cashoutBtn) {
+    cashoutBtn.addEventListener('click', async () => {
+      const amount = parseInt(cashoutAmountInput.value, 10);
+      if (!amount || amount <= 0) {
+        cashoutResult.textContent = 'Enter a valid amount.';
+        return;
+      }
+      const res = await fetch('/api/users/cashout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ amount })
+      });
+      const data = await res.json();
+      if (data.success) {
+        balance = data.newBalance;
+        updateBalanceDisplay();
+        bankBalanceDisplay.textContent = data.bankBalance;
+        cashoutResult.textContent = `Cashed out ${amount} credits to bank!`;
+      } else {
+        cashoutResult.textContent = data.error || 'Cashout failed.';
+      }
+    });
+  }
+
+  async function fetchBankBalance() {
+    const res = await fetch('/api/users/bank', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      bankBalanceDisplay.textContent = data.bankBalance;
+    }
+  }
 
   function initGame() {
     fetch('/api/users/me', {
@@ -268,4 +309,6 @@ document.addEventListener('DOMContentLoaded', () => {
       bonusModal.style.display = 'none';
     };
   }
+
+  document.addEventListener('DOMContentLoaded', fetchBankBalance);
 });

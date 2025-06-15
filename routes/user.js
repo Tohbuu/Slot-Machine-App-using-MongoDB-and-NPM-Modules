@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const auth = require('../middleware/auth');
 const User = require('../models/User');
+const userController = require('../controllers/userController');
 
 // Configure Multer for avatar uploads with centralized config
 const storage = multer.diskStorage({

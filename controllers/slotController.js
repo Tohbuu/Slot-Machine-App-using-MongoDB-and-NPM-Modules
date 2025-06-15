@@ -170,6 +170,17 @@ exports.spin = async (req, res) => {
       user.jackpotsWon = (user.jackpotsWon || 0) + 1;
     }
 
+    // Award experience for each spin (e.g., 10 XP per spin)
+    const XP_PER_SPIN = 10;
+    user.experience += XP_PER_SPIN;
+
+    // Level up logic: e.g., 100 XP per level
+    const XP_PER_LEVEL = 100;
+    while (user.experience >= XP_PER_LEVEL) {
+      user.experience -= XP_PER_LEVEL;
+      user.level += 1;
+    }
+
     await jackpot.save();
     await user.save();
 
@@ -184,8 +195,8 @@ exports.spin = async (req, res) => {
       jackpotAmount,
       newBalance: user.balance,
       freeSpins: user.freeSpins,
-      bonusRound,
-      bonusData
+      level: user.level,
+      experience: user.experience
     });
   } catch (err) {
     console.error(err);

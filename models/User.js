@@ -22,13 +22,19 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 1000
   },
+  bankBalance: {
+    type: Number,
+    default: 0
+  },
   level: {
     type: Number,
-    default: 1
+    default: 1,
+    min: 1
   },
   experience: {
     type: Number,
-    default: 0
+    default: 0,
+    min: 0
   },
   profilePicture: {
     type: String,

@@ -27,6 +27,10 @@ function fetchUserData() {
     .then(data => {
       if (data.success) {
         document.querySelector('.balance-amount').textContent = data.user.balance;
+        const avatar = document.querySelector('.user-avatar');
+        if (avatar) {
+          avatar.src = `/images/avatars/${data.user.profilePicture || 'default.png'}`;
+        }
       }
     });
 }

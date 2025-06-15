@@ -109,15 +109,16 @@ class RewardManager {
 
   async loadUserProgress() {
     try {
-      const response = await fetch('/api/user', {
+      const response = await fetch('/api/users/me', {
         headers: { 
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         }
       });
-      
       const { user } = await response.json();
       this.currentLevelEl.textContent = user.level;
-      this.levelProgressEl.style.width = `${user.experience}%`;
+      // XP_PER_LEVEL must match backend
+      const XP_PER_LEVEL = 100;
+      this.levelProgressEl.style.width = `${Math.min(100, Math.round((user.experience / XP_PER_LEVEL) * 100))}%`;
     } catch (err) {
       console.error('Failed to load user progress:', err);
     }
