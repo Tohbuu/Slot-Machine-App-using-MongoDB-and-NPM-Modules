@@ -10,8 +10,15 @@ router.get('/leaderboard', async (req, res) => {
       .limit(10)
       .select('username profilePicture totalWins jackpotsWon level');
 
-    res.json({ success: true, topPlayers });
+    // Ensure defaults for legacy users
+    const players = topPlayers.map(player => ({
+      ...player.toObject(),
+      totalWins: typeof player.totalWins === 'number' ? player.totalWins : 0,
+      jackpotsWon: typeof player.jackpotsWon === 'number' ? player.jackpotsWon : 0,
+      level: typeof player.level === 'number' ? player.level : 1
+    }));
 
+    res.json({ success: true, topPlayers: players });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Server error' });

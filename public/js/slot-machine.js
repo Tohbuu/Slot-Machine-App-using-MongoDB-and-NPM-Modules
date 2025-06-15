@@ -65,21 +65,14 @@ document.addEventListener('DOMContentLoaded', () => {
         balance = data.newBalance;
         updateBalanceDisplay();
         bankBalanceDisplay.textContent = data.bankBalance;
+        // Also update header
+        const headerBank = document.querySelector('.bank-amount');
+        if (headerBank) headerBank.textContent = data.bankBalance;
         cashoutResult.textContent = `Cashed out ${amount} credits to bank!`;
       } else {
         cashoutResult.textContent = data.error || 'Cashout failed.';
       }
     });
-  }
-
-  async function fetchBankBalance() {
-    const res = await fetch('/api/users/bank', {
-      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    });
-    const data = await res.json();
-    if (data.success) {
-      bankBalanceDisplay.textContent = data.bankBalance;
-    }
   }
 
   function initGame() {
@@ -94,7 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
           balance = data.user.balance;
           updateBalanceDisplay();
           updateBetDisplay();
-          createReels();
+          createReels(); // <-- Ensure reels are created after user data loads
+          updateHeaderUserInfo(); // Also update avatar and balances in header
+          fetchBankBalance(); // Update bank balance in both header and bank section
         } else {
           window.location.href = '/login';
         }
@@ -310,5 +305,35 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  document.addEventListener('DOMContentLoaded', fetchBankBalance);
+  function updateHeaderUserInfo() {
+    fetch('/api/users/me', {
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          document.querySelector('.balance-amount').textContent = data.user.balance;
+          document.querySelector('.bank-amount').textContent = data.user.bankBalance || 0;
+          const avatar = document.querySelector('.user-avatar');
+          if (avatar) {
+            avatar.src = `/images/avatars/${data.user.profilePicture || 'default.png'}`;
+          }
+        }
+      });
+  }
+
+  async function fetchBankBalance() {
+    const res = await fetch('/api/users/bank', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.querySelector('.bank-balance').textContent = data.bankBalance;
+      // Optionally update header too:
+      const headerBank = document.querySelector('.bank-amount');
+      if (headerBank) headerBank.textContent = data.bankBalance;
+    }
+  }
 });

@@ -92,6 +92,21 @@ header {
   color: var(--accent-color);
 }
 
+.bank {
+  background: rgba(0, 0, 0, 0.5);
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.bank-amount {
+  color: var(--primary-color);
+  margin-left: 5px;
+}
+
 /* Slot Machine Styles */
 .slot-machine {
   background: rgba(26, 26, 46, 0.8);

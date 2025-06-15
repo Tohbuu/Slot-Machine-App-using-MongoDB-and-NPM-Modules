@@ -181,6 +181,15 @@ exports.spin = async (req, res) => {
       user.level += 1;
     }
 
+    // Count a win if any payline pays out or scatterWin > 0 or jackpotWin
+    if ((totalWin > 0 || scatterWin > 0) && !jackpotWin) {
+      user.totalWins = (user.totalWins || 0) + 1;
+    }
+    if (jackpotWin) {
+      user.jackpotsWon = (user.jackpotsWon || 0) + 1;
+      user.totalWins = (user.totalWins || 0) + 1; // Optionally count jackpot as a win too
+    }
+
     await jackpot.save();
     await user.save();
 

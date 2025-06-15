@@ -49,8 +49,8 @@ function renderLeaderboard(players) {
         <img src="/images/avatars/${player.profilePicture}" alt="${player.username}" class="player-avatar">
         <span>${player.username}</span>
       </div>
-      <div class="wins">${player.totalWins.toLocaleString()}</div>
-      <div class="jackpots">${player.jackpotsWon}</div>
+      <div class="wins">${player.totalWins?.toLocaleString() || 0}</div>
+      <div class="jackpots">${player.jackpotsWon || 0}</div>
       <div class="level">${player.level}</div>
     `;
     

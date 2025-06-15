@@ -205,6 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Buy Coins logic
     const buyBtn = document.querySelector('.btn-buy-coins');
     const input = document.querySelector('.buy-coins-input');
+    const bankBalanceEl = document.getElementById('booster-bank-balance');
+
     if (buyBtn && input) {
       buyBtn.addEventListener('click', async () => {
         const amount = parseInt(input.value, 10);
@@ -224,7 +226,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.success) {
           alert(`Added ${amount} coins!\nBuys left today: ${data.buysLeft}`);
           document.querySelector('.balance-amount').textContent = data.newBalance;
-          document.getElementById('booster-balance').textContent = data.newBalance;
+          if (bankBalanceEl && data.newBankBalance !== undefined) {
+            bankBalanceEl.textContent = data.newBankBalance;
+          }
           showBuyCoinsStatus(data.buysLeft, data.nextBuy);
         } else {
           alert(data.error || 'Failed to add coins');
