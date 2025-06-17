@@ -212,3 +212,10 @@ _Add screenshots of the slot machine, leaderboard, and profile page here!_
 ## Contact
 
 For questions or suggestions, open an issue or contact [rin96tohsakaaa69@gmail.com](mailto:rin96tohsakaaa69@gmail.com).
+
+
+## To generate 32 bit ascii key
+
+'''
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+'''
