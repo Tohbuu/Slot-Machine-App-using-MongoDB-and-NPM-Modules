@@ -10,21 +10,43 @@ class BoosterManager {
     await this.loadBoosters();
     await this.loadActiveBoosters();
     this.updateBankBalance();
+    this.setupEventListeners();
     setInterval(() => this.checkExpiredBoosters(), 60000);
+  }
+
+  setupEventListeners() {
+    this.packsContainer.addEventListener('click', (e) => {
+      if (e.target.classList.contains('purchase-btn')) {
+        e.preventDefault(); // Prevent default button behavior
+        
+        // Get the pack ID from the button's data attribute or parent card
+        const packId = e.target.dataset.packId || e.target.closest('.pack-card').dataset.id;
+        
+        console.log('Pack ID extracted:', packId); // Debug log
+        
+        if (packId) {
+          this.purchaseBooster(packId);
+        } else {
+          console.error('No pack ID found');
+          alert('Error: Could not identify booster pack');
+        }
+      }
+    });
   }
 
   async loadBoosters() {
     try {
       const response = await fetch('/api/boosters', {
-        headers: { 
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      
       const { success, boosters, error } = await response.json();
-      
       if (success) {
-        this.renderBoosters(boosters);
+        // Fetch active boosters to know which are active
+        const activeRes = await fetch('/api/boosters/active', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const { boosters: activeBoosters = [] } = await activeRes.json();
+        this.renderBoosters(boosters, activeBoosters);
       } else {
         console.error('Error loading boosters:', error);
         alert('Failed to load boosters');
@@ -35,58 +57,64 @@ class BoosterManager {
     }
   }
 
-  renderBoosters(boosters) {
-    this.packsContainer.innerHTML = boosters.map(pack => `
-      <div class="pack-card" data-id="${pack._id}">
-        <div class="pack-header">
-          <img src="/images/boosters/${pack.icon}" alt="${pack.name}">
-          <span class="pack-name">${pack.name}</span>
-          <span class="pack-level">Lv. ${pack.levelRequired}+</span>
-        </div>
-        
-        <p class="pack-desc">${pack.description}</p>
-        
-        <div class="pack-effects">
-          ${pack.effects.winMultiplier > 1 ? `
-            <div class="effect-item">
-              <i class="fas fa-chart-line"></i>
-              ${pack.effects.winMultiplier}x Win Multiplier
-            </div>
-          ` : ''}
-          
-          ${pack.effects.freeSpins > 0 ? `
-            <div class="effect-item">
-              <i class="fas fa-sync-alt"></i>
-              ${pack.effects.freeSpins} Free Spins
-            </div>
-          ` : ''}
-          
-          ${pack.effects.jackpotBoost > 0 ? `
-            <div class="effect-item">
-              <i class="fas fa-trophy"></i>
-              +${pack.effects.jackpotBoost * 100}% Jackpot Chance
-            </div>
-          ` : ''}
-        </div>
-        
-        <button class="btn-buy" data-id="${pack._id}" data-price="${pack.price}">
-          BUY - ${pack.price} Credits
-        </button>
-      </div>
-    `).join('');
-
-    // Add event listeners
-    document.querySelectorAll('.btn-buy').forEach(btn => {
-      btn.addEventListener('click', (e) => this.purchaseBooster(e));
-    });
+  formatPrice(price) {
+    if (price >= 1_000_000_000) return (price / 1_000_000_000) + 'B';
+    if (price >= 1_000_000) return (price / 1_000_000) + 'M';
+    if (price >= 1_000) return (price / 1_000) + 'K';
+    return price;
   }
 
-  async purchaseBooster(e) {
-    const packId = e.target.dataset.id;
-    const price = parseInt(e.target.dataset.price);
+  renderBoosters(boosters, activeBoosters = []) {
+    // Filter out null boosters
+    boosters = boosters.filter(b => b && b._id);
     
-    if (!confirm(`Purchase this booster for ${price} credits from your bank?`)) return;
-    
+    this.packsContainer.innerHTML = boosters.map(booster => {
+      const isActive = activeBoosters.some(active => 
+        active.pack && active.pack._id === booster._id
+      );
+      
+      return `
+        <div class="pack-card" data-id="${booster._id}">
+          <div class="pack-header">
+            <h3>${booster.name}</h3>
+            <div class="pack-level">Level ${booster.levelRequired}+</div>
+          </div>
+          <div class="pack-description">
+            ${booster.description}
+          </div>
+          <div class="pack-effects">
+            ${booster.effects.winMultiplier > 1 ? `<div>Win: ${booster.effects.winMultiplier}x</div>` : ''}
+            ${booster.effects.freeSpins > 0 ? `<div>Free Spins: ${booster.effects.freeSpins}</div>` : ''}
+            ${booster.effects.jackpotBoost > 0 ? `<div>Jackpot: +${booster.effects.jackpotBoost}x</div>` : ''}
+          </div>
+          <div class="pack-footer">
+            <div class="pack-price">${this.formatPrice(booster.price)} coins</div>
+            <button class="purchase-btn" 
+                    data-pack-id="${booster._id}" 
+                    ${isActive ? 'disabled' : ''}>
+              ${isActive ? 'Active' : 'Purchase'}
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  async purchaseBooster(packId) {
+    if (!packId || typeof packId !== 'string') {
+      console.error('Invalid pack ID:', packId);
+      alert('Error: Invalid booster pack selection');
+      return;
+    }
+
+    // Find the button and add loading state
+    const button = document.querySelector(`[data-pack-id="${packId}"]`);
+    if (button) {
+      button.classList.add('loading');
+      button.disabled = true;
+      button.textContent = 'Processing...';
+    }
+
     try {
       const response = await fetch('/api/boosters/purchase', {
         method: 'POST',
@@ -94,23 +122,74 @@ class BoosterManager {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ packId })
+        body: JSON.stringify({ packId: packId })
       });
-      
+
       const result = await response.json();
-      
+    
       if (result.success) {
-        alert('Booster activated successfully!');
-        this.bankBalanceEl.textContent = result.newBankBalance;
-        this.loadActiveBoosters();
-        this.loadBoosters(); // Refresh list
+        // Success state
+        if (button) {
+          button.classList.remove('loading');
+          button.classList.add('success');
+          button.textContent = 'Purchased!';
+        }
+        
+        // Show success message
+        this.showSuccessMessage('Booster purchased successfully!');
+        
+        // Refresh data
+        await this.loadBoosters();
+        await this.loadActiveBoosters();
+        this.updateBankBalance();
       } else {
-        alert(result.error || 'Purchase failed');
+        // Error state
+        if (button) {
+          button.classList.remove('loading');
+          button.disabled = false;
+          button.textContent = 'Purchase';
+        }
+        alert(result.error || 'Failed to purchase booster');
       }
     } catch (err) {
       console.error('Purchase error:', err);
-      alert('Network error - please try again');
+      
+      // Reset button on error
+      if (button) {
+        button.classList.remove('loading');
+        button.disabled = false;
+        button.textContent = 'Purchase';
+      }
+      
+      alert('Connection error during purchase');
     }
+  }
+
+  // Add success message method
+  showSuccessMessage(message) {
+    const successEl = document.createElement('div');
+    successEl.className = 'success-message';
+    successEl.textContent = message;
+    successEl.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: linear-gradient(45deg, #4caf50, #45a049);
+      color: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      z-index: 1000;
+      font-family: 'Orbitron', monospace;
+      animation: slideIn 0.3s ease;
+    `;
+    
+    document.body.appendChild(successEl);
+    
+    setTimeout(() => {
+      successEl.style.animation = 'slideOut 0.3s ease';
+      setTimeout(() => successEl.remove(), 300);
+    }, 3000);
   }
 
   async loadActiveBoosters() {
@@ -134,6 +213,8 @@ class BoosterManager {
   }
 
   renderActiveBoosters(boosters) {
+    // Filter out boosters with null pack
+    boosters = boosters.filter(b => b && b.pack && b.pack.icon);
     if (boosters.length === 0) {
       this.activeBoostersEl.innerHTML = `
         <div class="empty-state">

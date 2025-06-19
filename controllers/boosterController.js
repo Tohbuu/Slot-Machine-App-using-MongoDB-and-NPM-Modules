@@ -20,32 +20,58 @@ exports.getAvailableBoosters = async (req, res) => {
 
 // Purchase and activate booster
 exports.purchaseBooster = async (req, res) => {
+  console.log('Purchase request received:', req.body);
+  console.log('User ID:', req.user.id);
+  
   try {
     const { packId } = req.body;
+    console.log('Looking for pack:', packId);
+    
+    // Validate packId
+    if (!packId) {
+      return res.status(400).json({ success: false, error: 'Pack ID is required' });
+    }
+
+    // Find user and pack separately for better error handling
     const user = await User.findById(req.user.id);
+    console.log('User found:', user ? 'Yes' : 'No');
+    console.log('User bank balance:', user?.bankBalance);
+    if (!user) {
+      return res.status(404).json({ success: false, error: 'User not found' });
+    }
+
     const pack = await BoosterPack.findById(packId);
-
-    // Validations
+    console.log('Pack found:', pack ? pack.name : 'No');
     if (!pack) {
-      return res.status(404).json({ 
-        success: false, 
-        error: 'Booster pack not found' 
-      });
+      return res.status(404).json({ success: false, error: 'Booster pack not found' });
     }
 
+    // Populate active boosters separately
+    try {
+      await user.populate('activeBoosters.pack');
+      console.log('Population successful');
+    } catch (populateErr) {
+      console.log('Population failed:', populateErr.message);
+      // Continue without population for now
+    }
+
+    // Check if booster is already active
+    const alreadyActive = user.activeBoosters.some(
+      b => b.pack && b.pack._id.toString() === packId && new Date(b.expiresAt) > new Date()
+    );
+    
+    if (alreadyActive) {
+      return res.status(400).json({ success: false, error: 'This booster is already active.' });
+    }
+
+    // Level requirement check
     if (user.level < pack.levelRequired) {
-      return res.status(403).json({
-        success: false,
-        error: `Requires level ${pack.levelRequired}`
-      });
+      return res.status(403).json({ success: false, error: `Requires level ${pack.levelRequired}` });
     }
 
-    // Use only bankBalance for booster purchases
+    // Balance check
     if (user.bankBalance < pack.price) {
-      return res.status(400).json({
-        success: false,
-        error: 'Insufficient bank balance (cash out more from slot winnings)'
-      });
+      return res.status(400).json({ success: false, error: 'Insufficient bank balance (cash out more from slot winnings)' });
     }
 
     // Process purchase
@@ -58,16 +84,23 @@ exports.purchaseBooster = async (req, res) => {
 
     await user.save();
 
+    // Return success response
     res.json({
       success: true,
+      message: 'Booster purchased successfully!',
       newBankBalance: user.bankBalance,
       activeBoosters: user.activeBoosters
     });
 
   } catch (err) {
+    console.error('Detailed error:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name
+    });
     res.status(500).json({ 
       success: false, 
-      error: 'Purchase failed' 
+      error: 'Purchase failed: ' + err.message 
     });
   }
 };
@@ -75,19 +108,19 @@ exports.purchaseBooster = async (req, res) => {
 // Get user's active boosters
 exports.getActiveBoosters = async (req, res) => {
   try {
-    const user = await User.findById(req.user.id)
-      .populate('activeBoosters.pack');
-
+    const user = await User.findById(req.user.id).populate('activeBoosters.pack');
+    
     // Filter out expired boosters
-    const validBoosters = user.activeBoosters.filter(b => 
-      new Date(b.expiresAt) > new Date()
+    const activeBoosters = user.activeBoosters.filter(
+      booster => new Date(booster.expiresAt) > new Date()
     );
 
-    res.json({ success: true, boosters: validBoosters });
+    res.json({ success: true, boosters: activeBoosters });
   } catch (err) {
+    console.error('Error getting active boosters:', err);
     res.status(500).json({ 
       success: false, 
-      error: 'Failed to load boosters' 
+      error: 'Failed to load active boosters' 
     });
   }
 };

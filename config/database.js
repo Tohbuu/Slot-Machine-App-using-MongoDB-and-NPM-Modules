@@ -62,7 +62,44 @@ async function connectDB() {
   }
 }
 
+// Purchase booster function (example)
+async function purchaseBooster(req, res) {
+  try {
+    const { userId, boosterId } = req.body;
+
+    // Validate input
+    if (!userId || !boosterId) {
+      return res.status(400).json({ success: false, error: 'Invalid input' });
+    }
+
+    // Find user and booster
+    const user = await User.findById(userId);
+    const booster = await Booster.findById(boosterId);
+
+    if (!user || !booster) {
+      return res.status(404).json({ success: false, error: 'User or booster not found' });
+    }
+
+    // Check if user has enough coins
+    if (user.coins < booster.price) {
+      return res.status(400).json({ success: false, error: 'Not enough coins' });
+    }
+
+    // Purchase logic
+    user.coins -= booster.price;
+    user.boosters.push(boosterId);
+
+    await user.save();
+
+    res.json({ success: true, message: 'Booster purchased successfully' });
+  } catch (err) {
+    console.error('Purchase booster error:', err); // Add this line
+    res.status(500).json({ success: false, error: 'Purchase failed' });
+  }
+}
+
 module.exports = {
   connectDB,
-  mongoose // Export mongoose for transactions if needed
+  mongoose, // Export mongoose for transactions if needed
+  purchaseBooster // Export the purchaseBooster function
 };

@@ -68,10 +68,18 @@ const UserSchema = new mongoose.Schema({
   activeBoosters: [{
     pack: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'BoosterPack'
+      ref: 'BoosterPack',
+      required: true
     },
-    effects: Object,
-    expiresAt: Date
+    effects: {
+      winMultiplier: { type: Number, default: 1.0 },
+      freeSpins: { type: Number, default: 0 },
+      jackpotBoost: { type: Number, default: 0 }
+    },
+    expiresAt: {
+      type: Date,
+      required: true
+    }
   }],
   buyCoinsCount: {
     type: Number,
