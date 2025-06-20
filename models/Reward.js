@@ -6,7 +6,7 @@ const RewardSchema = new mongoose.Schema({
     required: true,
     unique: true,
     min: 1,
-    max: 20
+    max: 100 // Updated to 100
   },
   rewards: {
     credits: {
@@ -25,12 +25,20 @@ const RewardSchema = new mongoose.Schema({
     }],
     unlocks: [{
       type: String,
-      enum: ['golden_spinner', 'vip_badge', 'exclusive_theme', 'animated_avatar']
+      enum: [
+        'golden_spinner', 'vip_badge', 'exclusive_theme', 'animated_avatar',
+        'bronze_frame', 'silver_frame', 'gold_frame', 'legendary_frame',
+        'neon_trail', 'particle_effects', 'custom_sounds', 'premium_themes'
+      ]
     }]
   },
   isPremium: {
     type: Boolean,
     default: false
+  },
+  description: {
+    type: String,
+    default: ''
   }
 }, { timestamps: true });
 

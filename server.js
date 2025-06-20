@@ -47,6 +47,7 @@ app.use('/api/users', userRoutes); // userRoutes from routes/users.js
 app.use('/api/slots', slotRoutes); // Slot game routes
 app.use('/api/user', userSingleRoutes);
 
+// Make sure these routes are registered
 app.use('/api/rewards', rewardsRoutes);
 app.use('/api/boosters', boosterRoutes);
 // Add slot spin endpoint

@@ -201,6 +201,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (data.bonusRound && data.bonusData) {
           showBonusModal(data.bonusData, betPerLine, paylines);
         }
+
+        // Look for level-up indicators in your API response
+        // This might be result.leveledUp, result.newLevel, or similar
+        
+        console.log('🎰 Spin result:', data); // Debug the full response
+        
+        // Check if user leveled up (adjust based on your API response structure)
+        if (data.leveledUp || (data.user && data.user.leveledUp)) {
+          console.log('🎰 User leveled up in slot machine!');
+          
+          // Show rewards notification
+          if (window.rewardNotification) {
+            window.rewardNotification.onLevelUp();
+          } else {
+            console.error('🎰 RewardNotification not available!');
+          }
+        }
       } else {
         showResult(data.error || 'Spin failed', false);
       }

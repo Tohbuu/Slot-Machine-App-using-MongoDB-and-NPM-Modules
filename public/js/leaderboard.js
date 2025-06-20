@@ -46,7 +46,9 @@ function renderLeaderboard(players) {
     playerRow.innerHTML = `
       <div class="rank">${index + 1}</div>
       <div class="player">
-        <img src="/images/avatars/${player.profilePicture}" alt="${player.username}" class="player-avatar">
+        <div class="avatar-container">
+          <img src="/images/avatars/${player.profilePicture}" alt="${player.username}" class="user-avatar player-avatar">
+        </div>
         <span>${player.username}</span>
       </div>
       <div class="wins">${player.totalWins?.toLocaleString() || 0}</div>
@@ -56,4 +58,11 @@ function renderLeaderboard(players) {
     
     leaderboardBody.appendChild(playerRow);
   });
+  
+  // Apply decorations to leaderboard avatars
+  if (window.globalAvatarDecorations) {
+    setTimeout(() => {
+      window.globalAvatarDecorations.applyDecorations();
+    }, 100);
+  }
 }

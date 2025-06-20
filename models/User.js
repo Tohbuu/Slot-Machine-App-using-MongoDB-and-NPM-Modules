@@ -57,6 +57,10 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  totalSpins: {
+    type: Number,
+    default: 0
+  },
   jackpotsWon: {
     type: Number,
     default: 0
@@ -64,6 +68,15 @@ const UserSchema = new mongoose.Schema({
   claimedRewards: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Reward'
+  }],
+  unlocks: [{
+    type: String,
+    enum: [
+      'golden_spinner', 'vip_badge', 'exclusive_theme', 'animated_avatar',
+      'bronze_frame', 'silver_frame', 'gold_frame', 'legendary_frame',
+      'neon_trail', 'particle_effects', 'custom_sounds', 'premium_themes',
+      'bronze_badge', 'silver_badge', 'gold_badge', 'legendary_badge'
+    ]
   }],
   activeBoosters: [{
     pack: {
@@ -88,7 +101,19 @@ const UserSchema = new mongoose.Schema({
   buyCoinsReset: {
     type: Date,
     default: () => new Date()
-  }
+  },
+  recentActivity: [{
+    type: {
+      type: String,
+      enum: ['spin', 'win', 'loss', 'jackpot', 'level', 'reward', 'achievement', 'bonus']
+    },
+    description: String,
+    amount: Number,
+    timestamp: {
+      type: Date,
+      default: Date.now
+    }
+  }]
 }, { timestamps: true });
 
 // Hash password before saving
@@ -104,7 +129,7 @@ UserSchema.pre('save', async function(next) {
   }
 });
 
-// Method to compare passwords
+// Compare password method
 UserSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };

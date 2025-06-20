@@ -82,12 +82,15 @@ BoosterPackSchema.statics.initBoosters = async function() {
       levelRequired: 20,
       price: 20000000, // 20M
       effects: { winMultiplier: 3.0, freeSpins: 15, jackpotBoost: 2.0 },
-      description: "Triple wins + 15 spins + best jackpot odds"
+      description: "Triple wins + 15 spins + maximum jackpot boost"
     }
   ];
 
-  await this.deleteMany({});
-  await this.insertMany(defaultBoosters);
+  const existingCount = await this.countDocuments();
+  if (existingCount === 0) {
+    await this.insertMany(defaultBoosters);
+    console.log('Default booster packs created');
+  }
 };
 
 module.exports = mongoose.model('BoosterPack', BoosterPackSchema);

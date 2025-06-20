@@ -618,6 +618,7 @@ header {
   padding: 8px 15px;
   border-radius: 5px;
   transition: all 0.3s;
+  position: relative;
 }
 
 .nav-link:hover {
@@ -626,6 +627,43 @@ header {
 
 .nav-link.active {
   background: var(--primary-color);
+}
+
+.notification-dot {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: #ff4444 !important;
+  border-radius: 50% !important;
+  border: 2px solid #1a1a2e !important;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.6) !important;
+  animation: notificationPulse 2s ease-in-out infinite !important;
+  z-index: 1000 !important;
+}
+
+@keyframes notificationPulse {
+  0%, 100% { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% { 
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+}
+
+/* Hide notification when rewards page is visited */
+.rewards-nav-link.visited .notification-dot {
+  display: none !important;
+}
+
+/* Additional class for forced visibility */
+.notification-dot.show-notification {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* Avatar Save Button - Added code */

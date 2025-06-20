@@ -1,94 +1,1001 @@
-.rewards-section {
-  background: var(--card-bg);
-  border-radius: 10px;
+/* Base Theme (Default) */
+:root {
+  --primary: #6e48aa;
+  --secondary: #9d50bb;
+  --background: #1a1a2e;
+  --text: #ffffff;
+  --accent: #4776e6;
+  --success: #4caf50;
+  --danger: #f44336;
+  --card-bg: rgba(30, 30, 46, 0.8);
+  --card-border: rgba(110, 72, 170, 0.3);
+}
+
+/* Cyberpunk Theme */
+.theme-cyber {
+  --primary: #00d2ff;
+  --secondary: #3a7bd5;
+  --background: #0f2027;
+  --text: #e0e0e0;
+  --accent: #ff00ff;
+  --card-bg: rgba(15, 32, 39, 0.9);
+  --card-border: rgba(0, 210, 255, 0.3);
+}
+
+/* Neon Theme */
+.theme-neon {
+  --primary: #39ff14;
+  --secondary: #a500ff;
+  --background: #232526;
+  --text: #ffffff;
+  --accent: #ff007f;
+  --card-bg: rgba(35, 37, 38, 0.9);
+  --card-border: rgba(57, 255, 20, 0.3);
+}
+
+/* Dark Mode */
+.theme-dark {
+  --primary: #333333;
+  --secondary: #666666;
+  --background: #121212;
+  --text: #e0e0e0;
+  --accent: #bb86fc;
+  --card-bg: rgba(30, 30, 30, 0.9);
+  --card-border: rgba(102, 102, 102, 0.3);
+}
+
+
+
+/* Battle Pass Styles */
+.battlepass-section {
   padding: 20px;
-  margin: 20px 0;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.battlepass-header {
+  text-align: center;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 30px;
+  border-radius: 20px;
+  border: 2px solid #00d4ff;
+  box-shadow: 0 0 30px rgba(0, 212, 255, 0.3);
+}
+
+.battlepass-header h1 {
+  color: #00d4ff;
+  font-family: 'Orbitron', monospace;
+  font-size: 2.5em;
+  margin: 0 0 20px 0;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+}
+
+.season-info {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.season-title {
+  color: #ffd700;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .progress-tracker {
   display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.level-info {
+  display: flex;
+  justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  gap: 5px;
+}
+
+.current-level-display {
+  color: #00d4ff;
+  font-family: 'Orbitron', monospace;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.max-level {
+  color: #888;
+  font-size: 1.2em;
+}
+
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
 }
 
 .progress-bar {
-  flex-grow: 1;
-  height: 10px;
-  background: var(--bg-dark);
-  border-radius: 5px;
-  margin-left: 10px;
+  width: 100%;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
   overflow: hidden;
+  border: 2px solid #333;
 }
 
 .progress-fill {
   height: 100%;
-  background: linear-gradient(to right, var(--primary), var(--secondary));
-  transition: width 0.5s ease;
-}
-
-.rewards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 25px;
-}
-
-.reward-card {
-  background: var(--card-bg-light);
+  background: linear-gradient(90deg, #00d4ff, #0099cc, #00ffff);
   border-radius: 8px;
-  padding: 15px;
-  border: 1px solid var(--border-color);
-  position: relative;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
 }
 
-.reward-card.claimed {
-  opacity: 0.7;
+.xp-info {
+  text-align: center;
+  color: #ccc;
+  font-size: 0.9em;
 }
 
-.reward-level {
-  position: absolute;
-  top: -10px;
-  left: 10px;
-  background: var(--primary);
+/* Battle Pass Controls */
+.battlepass-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.view-controls {
+  display: flex;
+  gap: 10px;
+}
+
+.control-btn {
+  background: linear-gradient(45deg, #333, #555);
+  border: 2px solid #666;
   color: white;
-  padding: 2px 10px;
-  border-radius: 10px;
-  font-size: 0.9rem;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-family: 'Orbitron', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.reward-content {
-  margin-top: 15px;
+.control-btn.active,
+.control-btn:hover {
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  border-color: #00d4ff;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+}
+
+.nav-btn {
+  background: linear-gradient(45deg, #ff6b35, #f7931e);
+  border: none;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 25px;
+  font-family: 'Orbitron', monospace;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:hover {
+  background: linear-gradient(45deg, #ff8c35, #ffa31e);
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+}
+
+/* Battle Pass Track */
+.battlepass-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+/* Reward Tier Cards */
+.reward-tier {
+  background: linear-gradient(145deg, #1a1a2e, #16213e);
+  border: 2px solid #333;
+  border-radius: 15px;
+  padding: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.reward-tier.current {
+  border-color: #00d4ff;
+  box-shadow: 0 0 25px rgba(0, 212, 255, 0.4);
+  transform: scale(1.02);
+}
+
+.reward-tier.claimed {
+  border-color: #4caf50;
+  background: linear-gradient(145deg, #1a2e1a, #162e16);
+  opacity: 0.8;
+}
+
+.reward-tier.locked {
+  opacity: 0.5;
+  border-color: #555;
+}
+
+.reward-tier.premium {
+  border-color: #ffd700;
+  background: linear-gradient(145deg, #2e2a1a, #2e2116);
+}
+
+.reward-tier.milestone {
+  border-color: #ff6b35;
+  background: linear-gradient(145deg, #2e1a1a, #2e1616);
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+}
+
+/* Tier Header */
+.tier-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.tier-level {
+  background: linear-gradient(45deg, #00d4ff, #0099cc);
+  color: white;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-family: 'Orbitron', monospace;
+  font-weight: bold;
+  font-size: 1.1em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.tier-level.premium {
+  background: linear-gradient(45deg, #ffd700, #ffb300);
+  color: #000;
+}
+
+.tier-level.milestone {
+  background: linear-gradient(45deg, #ff6b35, #f7931e);
+}
+
+.tier-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.9em;
+}
+
+.tier-status.current {
+  color: #00d4ff;
+}
+
+.tier-status.claimed {
+  color: #4caf50;
+}
+
+.tier-status.locked {
+  color: #888;
+}
+
+/* Tier Content */
+.tier-content {
+  margin-bottom: 20px;
+}
+
+.reward-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .reward-item {
   display: flex;
   align-items: center;
-  margin: 8px 0;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  border-left: 3px solid transparent;
 }
 
-.reward-item i {
-  margin-right: 8px;
-  color: var(--accent);
+.reward-item.credits {
+  border-left-color: #ffd700;
 }
 
-.btn-claim {
-  width: 100%;
-  padding: 8px;
-  margin-top: 10px;
-  background: var(--primary);
+.reward-item.booster {
+  border-left-color: #00d4ff;
+}
+
+.reward-item.unlock {
+  border-left-color: #ff6b35;
+}
+
+.reward-icon {
+  font-size: 1.2em;
+  width: 20px;
+  text-align: center;
+}
+
+.reward-icon.credits {
+  color: #ffd700;
+}
+
+.reward-icon.booster {
+  color: #00d4ff;
+}
+
+.reward-icon.unlock {
+  color: #ff6b35;
+}
+
+.reward-text {
+  flex: 1;
+  color: #ccc;
+  font-size: 0.95em;
+}
+
+.reward-amount {
   color: white;
+  font-weight: bold;
+  font-family: 'Orbitron', monospace;
+}
+
+/* Claim Button */
+.claim-btn {
+  width: 100%;
+  padding: 12px;
   border: none;
-  border-radius: 5px;
+  border-radius: 25px;
+  font-family: 'Orbitron', monospace;
+  font-weight: bold;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-claim:hover:not(.disabled) {
-  background: var(--primary-dark);
+.claim-btn.available {
+  background: linear-gradient(45deg, #4caf50, #45a049);
+  color: white;
+  box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
 }
 
-.btn-claim.disabled {
-  background: var(--bg-dark);
+.claim-btn.available:hover {
+  background: linear-gradient(45deg, #5cbf60, #4caf50);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(76, 175, 80, 0.5);
+}
+
+.claim-btn.claimed {
+  background: linear-gradient(45deg, #666, #555);
+  color: #999;
   cursor: not-allowed;
+}
+
+.claim-btn.locked {
+  background: linear-gradient(45deg, #333, #222);
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* Claim Animation */
+.claim-btn.claiming {
+  background: linear-gradient(45deg, #ff9800, #f57c00);
+  color: white;
+}
+
+.claim-btn.claiming::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border: 2px solid transparent;
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Battle Pass Footer */
+.battlepass-footer {
+  background: linear-gradient(135deg, #1a1a2e, #16213e);
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #333;
+}
+
+.battlepass-footer h3 {
+  color: #00d4ff;
+  font-family: 'Orbitron', monospace;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 1.5em;
+}
+
+.milestone-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.milestone-item {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 15px;
+  border-radius: 10px;
+  border-left: 4px solid #ff6b35;
+  text-align: center;
+}
+
+.milestone-level {
+  color: #ff6b35;
+  font-family: 'Orbitron', monospace;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+.milestone-reward {
+  color: #ccc;
+  font-size: 0.9em;
+}
+
+/* Animations */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.3); }
+  50% { box-shadow: 0 0 30px rgba(0, 212, 255, 0.6); }
+}
+
+.reward-tier.current {
+  animation: glow 2s ease-in-out infinite;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .battlepass-header h1 {
+    font-size: 2em;
+  }
+  
+  .battlepass-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .view-controls {
+    justify-content: center;
+  }
+  
+  .battlepass-track {
+    grid-template-columns: 1fr;
+  }
+  
+  .milestone-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Special Effects for High Levels */
+.reward-tier.level-25,
+.reward-tier.level-50,
+.reward-tier.level-75,
+.reward-tier.level-100 {
+  position: relative;
+}
+
+.reward-tier.level-25::before,
+.reward-tier.level-50::before,
+.reward-tier.level-75::before,
+.reward-tier.level-100::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, #ff6b35, #ffd700, #00d4ff, #ff6b35);
+  border-radius: 17px;
+  z-index: -1;
+  animation: borderRotate 3s linear infinite;
+}
+
+@keyframes borderRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Tier Badges */
+.tier-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8em;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.tier-badge.premium {
+  background: linear-gradient(45deg, #ffd700, #ffb300);
+  color: #000;
+}
+
+.tier-badge.milestone {
+  background: linear-gradient(45deg, #ff6b35, #f7931e);
+}
+
+.tier-badge.legendary {
+  background: linear-gradient(45deg, #9c27b0, #673ab7);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+/* Cosmetic Preview Section */
+.cosmetic-preview {
+  margin-top: 15px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  border: 1px solid #333;
+}
+
+/* Frame Preview Styles */
+.frame-preview-section {
+  margin-bottom: 20px;
+}
+
+.preview-title {
+  color: #00d4ff;
+  font-family: 'Orbitron', monospace;
+  font-weight: bold;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.frame-showcase {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.frame-demo {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  min-width: 80px;
+  position: relative;
+}
+
+.demo-avatar-container {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 8px;
+}
+
+.demo-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Frame Borders */
+.frame-border {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.frame-border.bronze_frame {
+  border: 3px solid #cd7f32;
+  box-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+}
+
+.frame-border.silver_frame {
+  border: 3px solid #c0c0c0;
+  box-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+}
+
+.frame-border.gold_frame {
+  border: 3px solid #ffd700;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.frame-border.legendary_frame {
+  border: 3px solid transparent;
+  background: linear-gradient(45deg, #ff6b35, #f7931e, #ffd700, #00d4ff);
+  background-size: 400% 400%;
+  animation: legendaryGlow 3s ease-in-out infinite;
+}
+
+/* Frame Glow Effects */
+.frame-glow {
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.frame-glow.common {
+  box-shadow: 0 0 8px rgba(205, 127, 50, 0.3);
+}
+
+.frame-glow.rare {
+  box-shadow: 0 0 12px rgba(192, 192, 192, 0.4);
+}
+
+.frame-glow.epic {
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+}
+
+.frame-glow.legendary {
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
+  animation: legendaryPulse 2s ease-in-out infinite;
+}
+
+.frame-name {
+  display: block;
+  color: #ccc;
+  font-size: 0.8em;
+  margin-bottom: 4px;
+}
+
+.frame-rarity {
+  display: block;
+  font-size: 0.7em;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.frame-rarity.common { color: #cd7f32; }
+.frame-rarity.rare { color: #c0c0c0; }
+.frame-rarity.epic { color: #ffd700; }
+.frame-rarity.legendary { 
+  color: #ff6b35;
+  text-shadow: 0 0 5px rgba(255, 107, 53, 0.8);
+}
+
+/* Badge Preview Styles */
+.badge-preview-section {
+  margin-top: 15px;
+}
+
+.badge-showcase {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.badge-demo {
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  min-width: 80px;
+}
+
+.badge-icon {
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2em;
+  position: relative;
+}
+
+.badge-icon.bronze_badge {
+  background: linear-gradient(45deg, #cd7f32, #b8860b);
+  color: white;
+  box-shadow: 0 0 10px rgba(205, 127, 50, 0.4);
+}
+
+.badge-icon.silver_badge {
+  background: linear-gradient(45deg, #c0c0c0, #a8a8a8);
+  color: white;
+  box-shadow: 0 0 10px rgba(192, 192, 192, 0.4);
+}
+
+.badge-icon.gold_badge {
+  background: linear-gradient(45deg, #ffd700, #ffb300);
+  color: #000;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+}
+
+.badge-icon.legendary_badge {
+  background: linear-gradient(45deg, #9c27b0, #673ab7);
+  color: white;
+  box-shadow: 0 0 20px rgba(156, 39, 176, 0.6);
+  animation: legendaryBadgePulse 2s ease-in-out infinite;
+}
+
+.badge-icon.vip_badge {
+  background: linear-gradient(45deg, #ff6b35, #f7931e);
+  color: white;
+  box-shadow: 0 0 15px rgba(255, 107, 53, 0.5);
+}
+
+.badge-name {
+  display: block;
+  color: #ccc;
+  font-size: 0.8em;
+  margin-bottom: 4px;
+}
+
+.badge-description {
+  display: block;
+  color: #888;
+  font-size: 0.7em;
+  font-style: italic;
+}
+
+/* User Avatar Decorations */
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.user-info .avatar-container {
+  position: relative;
+}
+
+.user-avatar {
+  position: relative;
+  z-index: 2;
+  border-radius: 50%;
+}
+
+/* Ensure frames are visible */
+.user-frame {
+  position: absolute !important;
+  top: -3px !important;
+  left: -3px !important;
+  right: -3px !important;
+  bottom: -3px !important;
+  border-radius: 50% !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+}
+
+.user-frame.bronze_frame {
+  border: 3px solid #cd7f32 !important;
+  box-shadow: 0 0 10px rgba(205, 127, 50, 0.5) !important;
+}
+
+.user-frame.silver_frame {
+  border: 3px solid #c0c0c0 !important;
+  box-shadow: 0 0 10px rgba(192, 192, 192, 0.5) !important;
+}
+
+.user-frame.gold_frame {
+  border: 3px solid #ffd700 !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.6) !important;
+}
+
+.user-frame.legendary_frame {
+  border: 3px solid #ff6b35 !important;
+  box-shadow: 0 0 20px rgba(255, 107, 53, 0.8) !important;
+  animation: legendaryGlow 3s ease-in-out infinite !important;
+}
+
+/* Ensure badges are visible */
+.user-badge {
+  position: absolute !important;
+  bottom: -5px !important;
+  right: -5px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.7em !important;
+  z-index: 4 !important;
+  border: 2px solid #1a1a2e !important;
+}
+
+.user-badge.bronze_badge {
+  background: linear-gradient(45deg, #cd7f32, #b8860b) !important;
+  color: white !important;
+}
+
+.user-badge.silver_badge {
+  background: linear-gradient(45deg, #c0c0c0, #a8a8a8) !important;
+  color: white !important;
+}
+
+.user-badge.gold_badge {
+  background: linear-gradient(45deg, #ffd700, #ffb300) !important;
+  color: #000 !important;
+}
+
+.user-badge.legendary_badge {
+  background: linear-gradient(45deg, #9c27b0, #673ab7) !important;
+  color: white !important;
+  animation: legendaryBadgePulse 2s ease-in-out infinite !important;
+}
+
+@keyframes legendaryGlow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 107, 53, 1);
+  }
+}
+
+@keyframes legendaryBadgePulse {
+  0%, 100% { 
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(156, 39, 176, 0.6);
+  }
+  50% { 
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(156, 39, 176, 0.8);
+  }
+}
+
+/* Mini Previews in Reward Items */
+.frame-mini-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-left: auto;
+  border: 2px solid;
+}
+
+.frame-mini-preview.bronze_frame { border-color: #cd7f32; }
+.frame-mini-preview.silver_frame { border-color: #c0c0c0; }
+.frame-mini-preview.gold_frame { border-color: #ffd700; }
+.frame-mini-preview.legendary_frame { 
+  border: 2px solid #ff6b35;
+  animation: legendaryGlow 3s ease-in-out infinite;
+}
+
+.badge-mini-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7em;
+}
+
+.badge-mini-preview.bronze_badge {
+  background: linear-gradient(45deg, #cd7f32, #b8860b);
+  color: white;
+}
+
+.badge-mini-preview.silver_badge {
+  background: linear-gradient(45deg, #c0c0c0, #a8a8a8);
+  color: white;
+}
+
+.badge-mini-preview.gold_badge {
+  background: linear-gradient(45deg, #ffd700, #ffb300);
+  color: #000;
+}
+
+.badge-mini-preview.legendary_badge {
+  background: linear-gradient(45deg, #9c27b0, #673ab7);
+  color: white;
+}
+
+/* Animations */
+@keyframes legendaryGlow {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes legendaryPulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 30px rgba(255, 107, 53, 0.8);
+    transform: scale(1.05);
+  }
+}
+
+@keyframes legendaryBadgePulse {
+  0%, 100% { 
+    box-shadow: 0 0 15px rgba(156, 39, 176, 0.6);
+    transform: scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(156, 39, 176, 0.8);
+    transform: scale(1.1);
+  }
+}
+
+/* Status Indicator */
+.user-status-indicator {
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #1a1a2e;
+  z-index: 5;
+}
+
+.user-status-indicator.online {
+  background: #4caf50;
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+}
+
+.user-status-indicator.away {
+  background: #ff9800;
+  box-shadow: 0 0 8px rgba(255, 152, 0, 0.6);
+}
+
+.user-status-indicator.busy {
+  background: #f44336;
+  box-shadow: 0 0 8px rgba(244, 67, 54, 0.6);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .frame-showcase,
+  .badge-showcase {
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .frame-demo,
+  .badge-demo {
+    min-width: 60px;
+  }
+  
+  .demo-avatar-container {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .badge-icon {
+    width: 35px;
+    height: 35px;
+  }
 }

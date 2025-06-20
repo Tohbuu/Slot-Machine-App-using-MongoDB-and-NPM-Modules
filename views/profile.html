@@ -6,6 +6,8 @@
   <title>Profile - Neon Spin</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/mobile.css">
+  <link rel="stylesheet" href="/css/global-avatar-decorations.css">
+  <link rel="stylesheet" href="/css/components/profile.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script type="module" src="/js/theme.js"></script>
 </head>
@@ -22,71 +24,303 @@
         <a href="/logout" class="nav-link">Logout</a>
       </nav>
       <div class="user-info">
-        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+        <div class="user-avatar-dropdown">
+          <div class="avatar-container">
+            <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+          </div>
+          <div class="user-dropdown-menu">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar-container">
+                <div class="avatar-container">
+                  <img src="/images/avatars/default.png" class="dropdown-avatar" alt="Avatar">
+                </div>
+              </div>
+              <div class="dropdown-user-info">
+                <div class="dropdown-username">Username</div>
+                <div class="dropdown-level">Level <span class="user-level-display">1</span></div>
+              </div>
+            </div>
+            
+            <div class="dropdown-section">
+              <div class="section-title">Status</div>
+              <div class="status-options">
+                <div class="status-option active" data-status="online">
+                  <div class="status-dot online"></div>
+                  <span>Online</span>
+                </div>
+                <div class="status-option" data-status="away">
+                  <div class="status-dot away"></div>
+                  <span>Away</span>
+                </div>
+                <div class="status-option" data-status="busy">
+                  <div class="status-dot busy"></div>
+                  <span>Busy</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Current Frame</div>
+              <div class="current-frame-display">
+                <div class="frame-preview-mini">
+                  <div class="mini-avatar-container">
+                    <img src="/images/avatars/default.png" class="mini-avatar" alt="Avatar">
+                  </div>
+                  <span class="frame-name-display">No Frame</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Current Badge</div>
+              <div class="current-badge-display">
+                <div class="badge-preview-mini">
+                  <div class="mini-badge-icon">
+                    <i class="fas fa-shield-alt"></i>
+                  </div>
+                  <span class="badge-name-display">No Badge</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-actions">
+              <a href="/profile" class="dropdown-action">
+                <i class="fas fa-user"></i>
+                <span>View Profile</span>
+              </a>
+              <a href="/rewards" class="dropdown-action">
+                <i class="fas fa-trophy"></i>
+                <span>Battle Pass</span>
+              </a>
+            </div>
+          </div>
+        </div>
         <span class="balance">Balance: <span class="balance-amount">0</span></span>
       </div>
     </header>
     
     <main>
       <section class="profile-section">
+        <!-- Enhanced Profile Header -->
         <div class="profile-header">
-          <img src="/images/avatars/default.png" alt="Profile Picture" class="profile-avatar">
+          <div class="profile-avatar-section">
+            <div class="avatar-container profile-avatar-container">
+              <img src="/images/avatars/default.png" alt="Profile Picture" class="profile-avatar">
+            </div>
+            <div class="avatar-upload">
+              <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+              <button class="upload-btn" onclick="document.getElementById('avatar-upload').click()">
+                <i class="fas fa-camera"></i> Change Avatar
+              </button>
+            </div>
+          </div>
           
           <div class="profile-info">
-            <h2>Username</h2>
+            <h2 class="profile-username">Username</h2>
+            <div class="profile-rank">
+              <i class="fas fa-trophy"></i>
+              <span class="rank-text">Rank #<span class="user-rank">--</span></span>
+            </div>
             
-            <div class="profile-stats">
-              <div class="stat-item">
-                <div class="stat-value balance">0</div>
-                <div class="stat-label">Credits</div>
+            <div class="profile-stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-coins"></i></div>
+                <div class="stat-content">
+                  <div class="stat-value balance">0</div>
+                  <div class="stat-label">Credits</div>
+                </div>
               </div>
               
-              <div class="stat-item">
-                <div class="stat-value level">1</div>
-                <div class="stat-label">Level</div>
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-level-up-alt"></i></div>
+                <div class="stat-content">
+                  <div class="stat-value level">1</div>
+                  <div class="stat-label">Level</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-star"></i></div>
+                <div class="stat-content">
+                  <div class="stat-value experience">0</div>
+                  <div class="stat-label">Experience</div>
+                </div>
+              </div>
+              
+              <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-gift"></i></div>
+                <div class="stat-content">
+                  <div class="stat-value rewards-claimed">0</div>
+                  <div class="stat-label">Rewards Claimed</div>
+                </div>
               </div>
             </div>
             
             <div class="progress-container">
-              <div>Progress to next level</div>
+              <div class="progress-header">
+                <span>Progress to Level <span class="next-level">2</span></span>
+                <span class="xp-text"><span class="current-xp">0</span> / <span class="required-xp">100</span> XP</span>
+              </div>
               <div class="progress-bar">
                 <div class="progress-fill" style="width: 0%"></div>
               </div>
             </div>
           </div>
         </div>
-        
-        <form class="profile-form">
-          <div class="form-row">
-            <div class="form-col">
-              <div class="form-group">
-                <label for="username" class="form-label">Username</label>
-                <input type="text" id="username" name="username" class="form-input">
+
+        <!-- Game Statistics -->
+        <div class="stats-section">
+          <h3><i class="fas fa-chart-bar"></i> Game Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-icon games"><i class="fas fa-play"></i></div>
+              <div class="stat-info">
+                <div class="stat-number total-spins">0</div>
+                <div class="stat-name">Total Spins</div>
               </div>
             </div>
             
-            <div class="form-col">
-              <div class="form-group">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" id="email" name="email" class="form-input">
+            <div class="stat-item">
+              <div class="stat-icon wins"><i class="fas fa-trophy"></i></div>
+              <div class="stat-info">
+                <div class="stat-number total-wins">0</div>
+                <div class="stat-name">Total Wins</div>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon jackpots"><i class="fas fa-crown"></i></div>
+              <div class="stat-info">
+                <div class="stat-number jackpots-won">0</div>
+                <div class="stat-name">Jackpots Won</div>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon winrate"><i class="fas fa-percentage"></i></div>
+              <div class="stat-info">
+                <div class="stat-number win-rate">0%</div>
+                <div class="stat-name">Win Rate</div>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon bank"><i class="fas fa-piggy-bank"></i></div>
+              <div class="stat-info">
+                <div class="stat-number bank-balance">0</div>
+                <div class="stat-name">Bank Balance</div>
+              </div>
+            </div>
+            
+            <div class="stat-item">
+              <div class="stat-icon boosters"><i class="fas fa-rocket"></i></div>
+              <div class="stat-info">
+                <div class="stat-number active-boosters">0</div>
+                <div class="stat-name">Active Boosters</div>
               </div>
             </div>
           </div>
+        </div>
+
+        <!-- Collected Frames & Badges -->
+        <div class="collections-section">
+          <h3><i class="fas fa-collection"></i> Collections</h3>
           
-          <button type="submit" class="submit-btn">SAVE CHANGES</button>
-        </form>
+          <div class="collection-tabs">
+            <button class="tab-btn active" data-tab="frames">
+              <i class="fas fa-picture-o"></i> Frames
+            </button>
+            <button class="tab-btn" data-tab="badges">
+              <i class="fas fa-shield-alt"></i> Badges
+            </button>
+            <button class="tab-btn" data-tab="themes">
+              <i class="fas fa-palette"></i> Themes
+            </button>
+          </div>
+          
+          <div class="collection-content">
+            <!-- Frames Collection -->
+            <div class="collection-tab active" id="frames-tab">
+              <div class="collection-grid" id="frames-collection">
+                <!-- Frames will be loaded here -->
+              </div>
+            </div>
+            
+            <!-- Badges Collection -->
+            <div class="collection-tab" id="badges-tab">
+              <div class="collection-grid" id="badges-collection">
+                <!-- Badges will be loaded here -->
+              </div>
+            </div>
+            
+            <!-- Themes Collection -->
+            <div class="collection-tab" id="themes-tab">
+              <div class="collection-grid" id="themes-collection">
+                <!-- Themes will be loaded here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="activity-section">
+          <h3><i class="fas fa-history"></i> Recent Activity</h3>
+          <div class="activity-list" id="recent-activity">
+            <!-- Recent activities will be loaded here -->
+          </div>
+        </div>
         
-        <div class="theme-selector">
-          <h3>Select Theme:</h3>
-          <div class="theme-option" data-theme="default" style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);"></div>
-          <div class="theme-option" data-theme="cyber" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);"></div>
-          <div class="theme-option" data-theme="neon" style="background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);"></div>
-          <div class="theme-option" data-theme="dark" style="background: linear-gradient(135deg, #232526 0%, #414345 100%);"></div>
+        <!-- Profile Settings Form -->
+        <div class="settings-section">
+          <h3><i class="fas fa-cog"></i> Profile Settings</h3>
+          <form class="profile-form">
+            <div class="form-row">
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="username" class="form-label">Username</label>
+                  <input type="text" id="username" name="username" class="form-input">
+                </div>
+              </div>
+              
+              <div class="form-col">
+                <div class="form-group">
+                  <label for="email" class="form-label">Email</label>
+                  <input type="email" id="email" name="email" class="form-input">
+                </div>
+              </div>
+            </div>
+            
+            <button type="submit" class="submit-btn">
+              <i class="fas fa-save"></i> SAVE CHANGES
+            </button>
+          </form>
+        </div>
+        
+        <!-- Theme Selector -->
+        <div class="theme-section">
+          <h3><i class="fas fa-palette"></i> Theme Selection</h3>
+          <div class="theme-selector">
+            <div class="theme-option active" data-theme="default" style="background: linear-gradient(135deg, #6e48aa 0%, #9d50bb 100%);">
+              <span class="theme-name">Default</span>
+            </div>
+            <div class="theme-option" data-theme="cyber" style="background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);">
+              <span class="theme-name">Cyber</span>
+            </div>
+            <div class="theme-option" data-theme="neon" style="background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);">
+              <span class="theme-name">Neon</span>
+            </div>
+            <div class="theme-option" data-theme="dark" style="background: linear-gradient(135deg, #232526 0%, #414345 100%);">
+              <span class="theme-name">Dark</span>
+            </div>
+          </div>
         </div>
       </section>
     </main>
   </div>
   
+  <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
   <script src="/js/profile.js"></script>
+  <script src="/js/avatar-decorations.js"></script>
+  <script src="/js/reward-notification.js"></script>
 </body>
 </html>

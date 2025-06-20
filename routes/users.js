@@ -1,34 +1,45 @@
 const express = require('express');
-const userController = require('../controllers/userController');
-const auth = require('../middleware/auth');
-const upload = require('../config/multer'); // Multer config for avatar uploads
-
 const router = express.Router();
+const auth = require('../middleware/auth');
+const User = require('../models/User');
 
-// @route   PUT /api/users
-// @desc    Update user profile
-router.put('/', auth, userController.updateProfile);
-
-// @route   PUT /api/users/theme
-// @desc    Update user theme
-router.put('/theme', auth, userController.updateTheme);
-
-// @route   POST /api/users/avatar
-// @desc    Upload user avatar
-router.post('/avatar', auth, upload.single('avatar'), userController.uploadAvatar);
-
-// @route   GET /api/users/me
-// @desc    Get current user info
-router.get('/me', auth, (req, res) => {
-  res.json({ success: true, user: req.user });
+// Get current user info
+router.get('/me', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('-password');
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Server error' });
+  }
 });
 
-// @route   POST /api/users/cashout
-// @desc    Cash out to bank
-router.post('/cashout', auth, userController.cashoutToBank);
+// Update user profile
+router.put('/', auth, async (req, res) => {
+  try {
+    const { username, email } = req.body;
+    const user = await User.findById(req.user.id);
 
-// @route   GET /api/users/bank
-// @desc    Get bank balance
-router.get('/bank', auth, userController.getBankBalance);
+    if (username) user.username = username;
+    if (email) user.email = email;
+
+    await user.save();
+    res.json({ success: true, user });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Update failed' });
+  }
+});
+
+// Update theme
+router.put('/theme', auth, async (req, res) => {
+  try {
+    const { theme } = req.body;
+    const user = await User.findById(req.user.id);
+    user.theme = theme;
+    await user.save();
+    res.json({ success: true, theme });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Theme update failed' });
+  }
+});
 
 module.exports = router;

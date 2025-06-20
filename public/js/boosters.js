@@ -101,20 +101,6 @@ class BoosterManager {
   }
 
   async purchaseBooster(packId) {
-    if (!packId || typeof packId !== 'string') {
-      console.error('Invalid pack ID:', packId);
-      alert('Error: Invalid booster pack selection');
-      return;
-    }
-
-    // Find the button and add loading state
-    const button = document.querySelector(`[data-pack-id="${packId}"]`);
-    if (button) {
-      button.classList.add('loading');
-      button.disabled = true;
-      button.textContent = 'Processing...';
-    }
-
     try {
       const response = await fetch('/api/boosters/purchase', {
         method: 'POST',
@@ -122,46 +108,23 @@ class BoosterManager {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
-        body: JSON.stringify({ packId: packId })
+        body: JSON.stringify({ packId })
       });
-
+    
       const result = await response.json();
     
       if (result.success) {
-        // Success state
-        if (button) {
-          button.classList.remove('loading');
-          button.classList.add('success');
-          button.textContent = 'Purchased!';
-        }
-        
-        // Show success message
-        this.showSuccessMessage('Booster purchased successfully!');
-        
-        // Refresh data
+        alert('Booster purchased successfully!');
+        this.currentBankBalance = result.newBankBalance;
+        this.updateBankBalance();
         await this.loadBoosters();
         await this.loadActiveBoosters();
-        this.updateBankBalance();
       } else {
-        // Error state
-        if (button) {
-          button.classList.remove('loading');
-          button.disabled = false;
-          button.textContent = 'Purchase';
-        }
-        alert(result.error || 'Failed to purchase booster');
+        alert(result.error || 'Purchase failed');
       }
     } catch (err) {
       console.error('Purchase error:', err);
-      
-      // Reset button on error
-      if (button) {
-        button.classList.remove('loading');
-        button.disabled = false;
-        button.textContent = 'Purchase';
-      }
-      
-      alert('Connection error during purchase');
+      alert('Network error - please try again');
     }
   }
 
@@ -195,13 +158,10 @@ class BoosterManager {
   async loadActiveBoosters() {
     try {
       const response = await fetch('/api/boosters/active', {
-        headers: { 
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
       });
-      
       const { success, boosters, error } = await response.json();
-      
+    
       if (success) {
         this.renderActiveBoosters(boosters);
       } else {
@@ -213,9 +173,7 @@ class BoosterManager {
   }
 
   renderActiveBoosters(boosters) {
-    // Filter out boosters with null pack
-    boosters = boosters.filter(b => b && b.pack && b.pack.icon);
-    if (boosters.length === 0) {
+    if (!boosters || boosters.length === 0) {
       this.activeBoostersEl.innerHTML = `
         <div class="empty-state">
           <i class="fas fa-box-open"></i>
@@ -224,37 +182,60 @@ class BoosterManager {
       `;
       return;
     }
-
-    this.activeBoostersEl.innerHTML = boosters.map(booster => `
-      <div class="active-booster">
-        <img src="/images/boosters/${booster.pack.icon}" alt="${booster.pack.name}">
-        <div>
-          <div class="booster-name">${booster.pack.name}</div>
-          <div class="expiry-time">
-            Expires: ${new Date(booster.expiresAt).toLocaleString()}
+    
+    this.activeBoostersEl.innerHTML = boosters.map(booster => {
+      const timeLeft = new Date(booster.expiresAt) - new Date();
+      const hoursLeft = Math.max(0, Math.floor(timeLeft / (1000 * 60 * 60)));
+      const minutesLeft = Math.max(0, Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60)));
+    
+      return `
+        <div class="active-booster">
+          <div class="booster-info">
+            <span class="booster-name">${booster.pack?.name || 'Unknown Booster'}</span>
+            <div class="booster-effects">
+              ${booster.effects.winMultiplier > 1 ? `<span class="effect">+${((booster.effects.winMultiplier - 1) * 100).toFixed(0)}% Win</span>` : ''}
+              ${booster.effects.freeSpins > 0 ? `<span class="effect">${booster.effects.freeSpins} Free Spins</span>` : ''}
+              ${booster.effects.jackpotBoost > 0 ? `<span class="effect">+${(booster.effects.jackpotBoost * 100).toFixed(0)}% Jackpot</span>` : ''}
+            </div>
+          </div>
+          <div class="time-left">
+            ${timeLeft > 0 ? `${hoursLeft}h ${minutesLeft}m left` : 'Expired'}
           </div>
         </div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
-  async updateBankBalance() {
-    try {
-      const response = await fetch('/api/users/bank', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      });
-      const data = await response.json();
-      if (data.success) {
-        this.bankBalanceEl.textContent = data.bankBalance;
-      }
-    } catch (err) {
-      console.error('Bank balance update failed:', err);
-    }
+  updateBankBalance() {
+    fetch('/api/users/me', {
+      headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          this.currentBankBalance = data.user.bankBalance || 0;
+          if (this.bankBalanceEl) {
+            this.bankBalanceEl.textContent = this.currentBankBalance.toLocaleString();
+          }
+        }
+      })
+      .catch(err => console.error('Failed to update bank balance:', err));
   }
 
   checkExpiredBoosters() {
-    // In a real app, this would ping the server to clean up expired boosters
-    this.loadActiveBoosters();
+    const activeBoosterElements = document.querySelectorAll('.active-booster');
+    let hasExpired = false;
+    
+    activeBoosterElements.forEach(element => {
+      const timeLeftElement = element.querySelector('.time-left');
+      if (timeLeftElement && timeLeftElement.textContent.includes('Expired')) {
+        hasExpired = true;
+      }
+    });
+    
+    if (hasExpired) {
+      this.loadActiveBoosters();
+    }
   }
 }
 

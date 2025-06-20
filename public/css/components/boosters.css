@@ -1,3 +1,52 @@
+/* Base Theme (Default) */
+:root {
+  --primary: #6e48aa;
+  --secondary: #9d50bb;
+  --background: #1a1a2e;
+  --text: #ffffff;
+  --accent: #4776e6;
+  --success: #4caf50;
+  --danger: #f44336;
+  --card-bg: rgba(30, 30, 46, 0.8);
+  --card-border: rgba(110, 72, 170, 0.3);
+}
+
+/* Cyberpunk Theme */
+.theme-cyber {
+  --primary: #00d2ff;
+  --secondary: #3a7bd5;
+  --background: #0f2027;
+  --text: #e0e0e0;
+  --accent: #ff00ff;
+  --card-bg: rgba(15, 32, 39, 0.9);
+  --card-border: rgba(0, 210, 255, 0.3);
+}
+
+/* Neon Theme */
+.theme-neon {
+  --primary: #39ff14;
+  --secondary: #a500ff;
+  --background: #232526;
+  --text: #ffffff;
+  --accent: #ff007f;
+  --card-bg: rgba(35, 37, 38, 0.9);
+  --card-border: rgba(57, 255, 20, 0.3);
+}
+
+/* Dark Mode */
+.theme-dark {
+  --primary: #333333;
+  --secondary: #666666;
+  --background: #121212;
+  --text: #e0e0e0;
+  --accent: #bb86fc;
+  --card-bg: rgba(30, 30, 30, 0.9);
+  --card-border: rgba(102, 102, 102, 0.3);
+}
+
+
+
+
 .booster-section {
   background: var(--card-bg);
   border-radius: 10px;

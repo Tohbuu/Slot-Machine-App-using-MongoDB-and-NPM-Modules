@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/css/mobile.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script type="module" src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/global-avatar-decorations.css">
 </head>
 <body>
   <div class="container">
@@ -17,13 +18,100 @@
       <nav class="nav-menu">
         <a href="/" class="nav-link">Play</a>
         <a href="/boosters" class="nav-link">Boosters</a>
-        <a href="/rewards" class="nav-link">Rewards</a>
+        <a href="/rewards" class="nav-link rewards-nav-link">
+          Rewards
+          <span class="notification-dot" id="rewards-notification" style="display: none;"></span>
+        </a>
         <a href="/profile" class="nav-link">Profile</a>
         <a href="/logout" class="nav-link">Logout</a>
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
       </nav>
       <div class="user-info">
-        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+        <div class="user-avatar-dropdown">
+          <div class="avatar-container" id="user-avatar-trigger">
+            <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+          </div>
+          <div class="user-dropdown-menu" id="user-dropdown-menu">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar-container">
+                <img src="/images/avatars/default.png" class="dropdown-avatar" alt="Avatar">
+              </div>
+              <div class="dropdown-user-info">
+                <div class="dropdown-username">Username</div>
+                <div class="dropdown-level">Level <span class="user-level-display">1</span></div>
+              </div>
+            </div>
+            
+            <div class="dropdown-section">
+              <div class="section-title">Status</div>
+              <div class="status-options">
+                <div class="status-option active" data-status="online">
+                  <div class="status-dot online"></div>
+                  <span>Online</span>
+                </div>
+                <div class="status-option" data-status="away">
+                  <div class="status-dot away"></div>
+                  <span>Away</span>
+                </div>
+                <div class="status-option" data-status="busy">
+                  <div class="status-dot busy"></div>
+                  <span>Busy</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Current Frame</div>
+              <div class="current-frame-display">
+                <div class="frame-preview-mini">
+                  <div class="mini-avatar-container">
+                    <img src="/images/avatars/default.png" class="mini-avatar" alt="Avatar">
+                  </div>
+                  <span class="frame-name-display">No Frame</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Current Badge</div>
+              <div class="current-badge-display">
+                <div class="badge-preview-mini">
+                  <div class="mini-badge-icon">
+                    <i class="fas fa-shield-alt"></i>
+                  </div>
+                  <span class="badge-name-display">No Badge</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Next Milestone</div>
+              <div class="milestone-progress">
+                <div class="milestone-info">
+                  <span class="milestone-level">Level 25</span>
+                  <span class="milestone-reward">Bronze Frame</span>
+                </div>
+                <div class="milestone-progress-bar">
+                  <div class="milestone-progress-fill"></div>
+                </div>
+                <div class="milestone-xp">
+                  <span class="current-xp">0</span> / <span class="required-xp">2500</span> XP
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-actions">
+              <a href="/profile" class="dropdown-action">
+                <i class="fas fa-user"></i>
+                <span>View Profile</span>
+              </a>
+              <a href="/rewards" class="dropdown-action">
+                <i class="fas fa-trophy"></i>
+                <span>Battle Pass</span>
+              </a>
+            </div>
+          </div>
+        </div>
         <span class="balance">Balance: <span class="balance-amount">0</span></span>
         <span class="bank">Bank: <span class="bank-amount">0</span></span>
       </div>
@@ -89,9 +177,11 @@
     </main>
   </div>
   
+  <script src="/js/reward-notification.js"></script>
   <script src="/js/slot-machine.js"></script>
   <script src="/js/boosters.js"></script>
   <script src="/js/rewards.js"></script>
-  
+  <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
+  <script src="/js/avatar-decorations.js"></script>
 </body>
 </html>

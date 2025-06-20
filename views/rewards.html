@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Level Rewards - Neon Spin</title>
+  <title>Battle Pass - Neon Spin</title>
   <link rel="stylesheet" href="/css/style.css">
   <link rel="stylesheet" href="/css/components/rewards.css">
   <link rel="stylesheet" href="/css/mobile.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global-avatar-decorations.css">
   <script type="module" src="/js/theme.js"></script>
 </head>
 <body>
@@ -17,34 +18,154 @@
       <nav class="nav-menu">
         <a href="/" class="nav-link">Play</a>
         <a href="/boosters" class="nav-link">Boosters</a>
-        <a href="/rewards" class="nav-link active">Rewards</a>
+        <a href="/rewards" class="nav-link active">Battle Pass</a>
         <a href="/profile" class="nav-link">Profile</a>
         <a href="/logout" class="nav-link">Logout</a>
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
       </nav>
       <div class="user-info">
-        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+        <div class="user-avatar-dropdown">
+          <div class="avatar-container" id="user-avatar-trigger">
+            <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+          </div>
+          <div class="user-dropdown-menu" id="user-dropdown-menu">
+            <div class="dropdown-header">
+              <div class="dropdown-avatar-container">
+                <img src="/images/avatars/default.png" class="dropdown-avatar" alt="Avatar">
+              </div>
+              <div class="dropdown-user-info">
+                <div class="dropdown-username">Username</div>
+                <div class="dropdown-level">Level <span class="user-level-display">1</span></div>
+              </div>
+            </div>
+            
+            <div class="dropdown-section">
+              <div class="section-title">Status</div>
+              <div class="status-options">
+                <div class="status-option active" data-status="online">
+                  <div class="status-dot online"></div>
+                  <span>Online</span>
+                </div>
+                <div class="status-option" data-status="away">
+                  <div class="status-dot away"></div>
+                  <span>Away</span>
+                </div>
+                <div class="status-option" data-status="busy">
+                  <div class="status-dot busy"></div>
+                  <span>Busy</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Current Frame</div>
+              <div class="current-frame-display">
+                <div class="frame-preview-mini">
+                  <div class="mini-avatar-container">
+                    <img src="/images/avatars/default.png" class="mini-avatar" alt="Avatar">
+                  </div>
+                  <span class="frame-name-display">No Frame</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Current Badge</div>
+              <div class="current-badge-display">
+                <div class="badge-preview-mini">
+                  <div class="mini-badge-icon">
+                    <i class="fas fa-shield-alt"></i>
+                  </div>
+                  <span class="badge-name-display">No Badge</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-section">
+              <div class="section-title">Next Milestone</div>
+              <div class="milestone-progress">
+                <div class="milestone-info">
+                  <span class="milestone-level">Level 25</span>
+                  <span class="milestone-reward">Bronze Frame</span>
+                </div>
+                <div class="milestone-progress-bar">
+                  <div class="milestone-progress-fill"></div>
+                </div>
+                <div class="milestone-xp">
+                  <span class="current-xp">0</span> / <span class="required-xp">2500</span> XP
+                </div>
+              </div>
+            </div>
+
+            <div class="dropdown-actions">
+              <a href="/profile" class="dropdown-action">
+                <i class="fas fa-user"></i>
+                <span>View Profile</span>
+              </a>
+              <a href="/rewards" class="dropdown-action">
+                <i class="fas fa-trophy"></i>
+                <span>Battle Pass</span>
+              </a>
+            </div>
+          </div>
+        </div>
         <span class="balance">Balance: <span class="balance-amount">0</span></span>
       </div>
     </header>
     <main>
-      <section class="rewards-section" id="rewards-section">
-        <div class="section-header">
-          <h2><i class="fas fa-trophy"></i> LEVEL REWARDS</h2>
-          <div class="progress-tracker">
-            <span>Level <span id="current-level">1</span>/20</span>
-            <div class="progress-bar">
-              <div class="progress-fill" id="level-progress"></div>
+      <section class="battlepass-section" id="rewards-section">
+        <div class="battlepass-header">
+          <h1><i class="fas fa-trophy"></i> NEON BATTLE PASS</h1>
+          <div class="season-info">
+            <span class="season-title">Season 1: Neon Genesis</span>
+            <div class="progress-tracker">
+              <div class="level-info">
+                <span class="current-level-display">Level <span id="current-level">1</span></span>
+                <span class="max-level">/100</span>
+              </div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="level-progress"></div>
+                </div>
+                <div class="xp-info">
+                  <span id="current-xp">0</span> / <span id="required-xp">100</span> XP
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div class="rewards-grid" id="rewards-grid">
+        
+        <div class="battlepass-controls">
+          <div class="view-controls">
+            <button class="control-btn active" id="view-all">All Levels</button>
+            <button class="control-btn" id="view-available">Available</button>
+            <button class="control-btn" id="view-claimed">Claimed</button>
+          </div>
+          <div class="level-navigation">
+            <button class="nav-btn" id="scroll-to-current">
+              <i class="fas fa-crosshairs"></i> Go to Current Level
+            </button>
+          </div>
+        </div>
+
+        <div class="battlepass-track" id="battlepass-track">
           <!-- Rewards will be loaded here -->
+        </div>
+        
+        <div class="battlepass-footer">
+          <div class="milestone-preview">
+            <h3>Upcoming Milestones</h3>
+            <div class="milestone-list" id="milestone-list">
+              <!-- Milestones will be loaded here -->
+            </div>
+          </div>
         </div>
       </section>
     </main>
   </div>
   <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
   <script src="/js/rewards.js"></script>
+  <script src="/js/avatar-decorations.js"></script>
+  <script src="/js/reward-notification.js"></script>
 </body>
 </html>
