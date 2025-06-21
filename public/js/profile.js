@@ -536,7 +536,7 @@ function setupAvatarUpload() {
     
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/api/users/avatar', {
+      const response = await fetch('/api/user/avatar', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -564,57 +564,57 @@ function setupAvatarUpload() {
   });
 }
 
-function uploadAvatar(file) {
-  const formData = new FormData();
-  formData.append('avatar', file);
+// function uploadAvatar(file) {
+//   const formData = new FormData();
+//   formData.append('avatar', file);
 
-  const saveBtn = document.querySelector('.avatar-save-btn');
-  if (saveBtn) {
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
-  }
+//   const saveBtn = document.querySelector('.avatar-save-btn');
+//   if (saveBtn) {
+//     saveBtn.disabled = true;
+//     saveBtn.textContent = 'Saving...';
+//   }
 
-  fetch('/api/users/avatar', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    },
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Avatar';
-      }
-      if (data.success) {
-        showMessage('Avatar updated successfully!', true);
-        // Update profile avatar in header and everywhere
-        const profileAvatar = document.querySelector('.profile-avatar');
-        if (profileAvatar) {
-          profileAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-        }
-        const headerAvatar = document.querySelector('.user-avatar');
-        if (headerAvatar) {
-          headerAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-        }
-        const avatarPreview = document.querySelector('.avatar-preview');
-        if (avatarPreview) {
-          avatarPreview.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-        }
-        if (saveBtn) saveBtn.remove();
-      } else {
-        showMessage(data.error || 'Failed to upload avatar', false);
-      }
-    })
-    .catch(error => {
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Avatar';
-      }
-      showMessage('Error uploading avatar', false);
-    });
-}
+//   fetch('/api/users/avatar', {
+//     method: 'POST',
+//     headers: {
+//       'Authorization': `Bearer ${localStorage.getItem('token')}`
+//     },
+//     body: formData
+//   })
+//     .then(response => response.json())
+//     .then(data => {
+//       if (saveBtn) {
+//         saveBtn.disabled = false;
+//         saveBtn.textContent = 'Save Avatar';
+//       }
+//       if (data.success) {
+//         showMessage('Avatar updated successfully!', true);
+//         // Update profile avatar in header and everywhere
+//         const profileAvatar = document.querySelector('.profile-avatar');
+//         if (profileAvatar) {
+//           profileAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
+//         }
+//         const headerAvatar = document.querySelector('.user-avatar');
+//         if (headerAvatar) {
+//           headerAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
+//         }
+//         const avatarPreview = document.querySelector('.avatar-preview');
+//         if (avatarPreview) {
+//           avatarPreview.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
+//         }
+//         if (saveBtn) saveBtn.remove();
+//       } else {
+//         showMessage(data.error || 'Failed to upload avatar', false);
+//       }
+//     })
+//     .catch(error => {
+//       if (saveBtn) {
+//         saveBtn.disabled = false;
+//         saveBtn.textContent = 'Save Avatar';
+//       }
+//       showMessage('Error uploading avatar', false);
+//     });
+// }
 
 function showMessage(message, isSuccess) {
   // Remove existing messages
