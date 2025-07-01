@@ -29,7 +29,7 @@
       <div class="user-info">
         <div class="user-avatar-dropdown">
           <div class="avatar-container" id="user-avatar-trigger">
-            <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
+        <img src="/images/avatars/default.png" class="user-avatar" alt="Avatar">
           </div>
           <div class="user-dropdown-menu" id="user-dropdown-menu">
             <div class="dropdown-header">
@@ -120,7 +120,9 @@
     <main>
       <section class="slot-machine content-section active" id="game-section">
         <div class="reels-container">
-          <!-- Reels will be inserted here by JavaScript -->
+          <div class="slot-grid">
+            <!-- 3x3 grid will be populated by JavaScript -->
+          </div>
         </div>
         <div class="controls">
           <div class="bet-controls">
@@ -140,16 +142,16 @@
               </div>
             </div>
             <span class="payline-checkboxes">
-              <label><input type="checkbox" class="payline-checkbox" value="0" checked>1</label>
-              <label><input type="checkbox" class="payline-checkbox" value="1" checked>2</label>
-              <label><input type="checkbox" class="payline-checkbox" value="2" checked>3</label>
-              <label><input type="checkbox" class="payline-checkbox" value="3" checked>4</label>
-              <label><input type="checkbox" class="payline-checkbox" value="4" checked>5</label>
-              <label><input type="checkbox" class="payline-checkbox" value="5">6</label>
-              <label><input type="checkbox" class="payline-checkbox" value="6">7</label>
-              <label><input type="checkbox" class="payline-checkbox" value="7">8</label>
-              <label><input type="checkbox" class="payline-checkbox" value="8">9</label>
-              <label><input type="checkbox" class="payline-checkbox" value="9">10</label>
+              <label><input type="checkbox" class="payline-checkbox" value="0" checked>0</label>
+              <label><input type="checkbox" class="payline-checkbox" value="1">1</label>
+              <label><input type="checkbox" class="payline-checkbox" value="2">2</label>
+              <label><input type="checkbox" class="payline-checkbox" value="3">3</label>
+              <label><input type="checkbox" class="payline-checkbox" value="4">4</label>
+              <label><input type="checkbox" class="payline-checkbox" value="5">5</label>
+              <label><input type="checkbox" class="payline-checkbox" value="6">6</label>
+              <label><input type="checkbox" class="payline-checkbox" value="7">7</label>
+              <label><input type="checkbox" class="payline-checkbox" value="8">8</label>
+              <label><input type="checkbox" class="payline-checkbox" value="9">9</label>
             </span>
           </div>
           <button class="spin-btn">SPIN</button>

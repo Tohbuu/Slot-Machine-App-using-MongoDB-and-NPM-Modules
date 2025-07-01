@@ -43,7 +43,7 @@ router.post('/avatar', auth, upload.single('avatar'), async (req, res) => {
     }
 
     const user = await User.findById(req.user.id);
-    
+
     // Delete old avatar if it's not default
     if (user.profilePicture && user.profilePicture !== 'default.png') {
       const oldPath = path.join(__dirname, '../public/images/avatars', user.profilePicture);
