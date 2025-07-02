@@ -1,6 +1,11 @@
 const User = require('../models/User');
 const Jackpot = require('../models/Jackpot');
 
+// XP required for next level: 100 + level * 50
+function getXpForLevel(level) {
+  return 100 + level * 50;
+}
+
 // Symbol definitions with multipliers and types
 const SYMBOLS = [
   { name: 'seven', type: 'normal', multiplier: 100 },
@@ -170,14 +175,30 @@ exports.spin = async (req, res) => {
       user.jackpotsWon = (user.jackpotsWon || 0) + 1;
     }
 
-    // Award experience for each spin (e.g., 10 XP per spin)
-    const XP_PER_SPIN = 10;
+    // Award experience for each spin (scales with bet and paylines)
+    const BASE_BET = 10;
+    const BASE_PAYLINES = 1;
+    const BASE_XP = 10;
+
+    let xpMultiplier = (betPerLine / BASE_BET) * (paylines.length / BASE_PAYLINES);
+
+    // Apply active booster winMultiplier if present
+    let boosterMultiplier = 1;
+    if (user.activeBoosters && user.activeBoosters.length > 0) {
+      // Find the highest winMultiplier among active boosters
+      boosterMultiplier = Math.max(
+        ...user.activeBoosters.map(b => b.effects?.winMultiplier || 1)
+      );
+    }
+    xpMultiplier *= boosterMultiplier;
+
+    const XP_PER_SPIN = Math.round(BASE_XP * xpMultiplier);
+
     user.experience += XP_PER_SPIN;
 
-    // Level up logic: e.g., 100 XP per level
-    const XP_PER_LEVEL = 100;
-    while (user.experience >= XP_PER_LEVEL) {
-      user.experience -= XP_PER_LEVEL;
+    // Level up logic: XP increases linearly with level
+    while (user.experience >= getXpForLevel(user.level)) {
+      user.experience -= getXpForLevel(user.level);
       user.level += 1;
     }
 
