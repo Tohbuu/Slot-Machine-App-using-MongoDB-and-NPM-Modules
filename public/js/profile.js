@@ -410,11 +410,11 @@ function updateProfileStats(user) {
   const winRate = user.totalSpins > 0 ? ((user.totalWins / user.totalSpins) * 100).toFixed(1) : 0;
   const winRateStat = safeQuerySelector('.stat-number.win-rate');
   if (winRateStat) winRateStat.textContent = `${winRate}%`;
-  
+
   // Update progress bar
-  const XP_PER_LEVEL = 100;
-  const currentLevelXp = user.experience % XP_PER_LEVEL;
-  const progressPercent = (currentLevelXp / XP_PER_LEVEL) * 100;
+  const requiredXp = getXpForLevel(user.level);
+  const currentLevelXp = user.experience;
+  const progressPercent = (currentLevelXp / requiredXp) * 100;
   
   const progressFill = safeQuerySelector('.progress-fill');
   if (progressFill) progressFill.style.width = `${progressPercent}%`;
@@ -425,8 +425,11 @@ function updateProfileStats(user) {
   const currentXp = safeQuerySelector('.current-xp');
   if (currentXp) currentXp.textContent = currentLevelXp;
   
-  const requiredXp = safeQuerySelector('.required-xp');
-  if (requiredXp) requiredXp.textContent = XP_PER_LEVEL;
+  const requiredXpEl = safeQuerySelector('.required-xp');
+  if (requiredXpEl) requiredXpEl.textContent = requiredXp;
+  
+  const maxLevelEl = safeQuerySelector('.max-level');
+  if (maxLevelEl) maxLevelEl.textContent = MAX_LEVEL;
 }
 
 // Profile form logic
@@ -1212,4 +1215,10 @@ function checkExpiredBoosters() {
   if (hasExpired) {
     this.loadActiveBoosters();
   }
+}
+
+const MAX_LEVEL = 100;
+
+function getXpForLevel(level) {
+  return 100 + level * 50;
 }

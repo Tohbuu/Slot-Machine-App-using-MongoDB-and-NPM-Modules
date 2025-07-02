@@ -552,13 +552,17 @@ class RewardManager {
       this.currentLevelEl.textContent = user.level;
       this.currentXpEl.textContent = user.experience;
       
-      // Calculate XP for current level
-      const currentLevelXp = user.experience % this.XP_PER_LEVEL;
-      this.requiredXpEl.textContent = this.XP_PER_LEVEL;
+      // Calculate XP for current level (doubles each level)
+      const requiredXp = getXpForLevel(user.level);
+      this.requiredXpEl.textContent = requiredXp;
       
       // Update progress bar
-      const progressPercent = Math.min(100, (currentLevelXp / this.XP_PER_LEVEL) * 100);
+      const progressPercent = Math.min(100, (user.experience / requiredXp) * 100);
       this.levelProgressEl.style.width = `${progressPercent}%`;
+      
+      document.querySelectorAll('.max-level').forEach(el => {
+        el.textContent = MAX_LEVEL;
+      });
       
     } catch (err) {
       console.error('Failed to load user progress:', err);
@@ -731,6 +735,13 @@ class RewardManager {
       default: return 'Special Achievement';
     }
   }
+}
+
+// Add this helper at the top of the file or inside the class as a static method
+const MAX_LEVEL = 100;
+
+function getXpForLevel(level) {
+  return 100 + level * 50;
 }
 
 // Update user info in header (avatar and balance)
