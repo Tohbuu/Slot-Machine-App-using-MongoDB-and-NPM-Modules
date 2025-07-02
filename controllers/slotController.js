@@ -180,19 +180,20 @@ exports.spin = async (req, res) => {
     const BASE_PAYLINES = 1;
     const BASE_XP = 10;
 
-    let xpMultiplier = (betPerLine / BASE_BET) * (paylines.length / BASE_PAYLINES);
+    // Nonlinear boost for paylines
+    let xpMultiplier = (betPerLine / BASE_BET) * Math.pow(paylines.length / BASE_PAYLINES, 1.2);
 
     // Apply active booster winMultiplier if present
     let boosterMultiplier = 1;
     if (user.activeBoosters && user.activeBoosters.length > 0) {
-      // Find the highest winMultiplier among active boosters
       boosterMultiplier = Math.max(
         ...user.activeBoosters.map(b => b.effects?.winMultiplier || 1)
       );
     }
     xpMultiplier *= boosterMultiplier;
 
-    const XP_PER_SPIN = Math.round(BASE_XP * xpMultiplier);
+    // Calculate XP, clamp to min/max to avoid abuse
+    const XP_PER_SPIN = Math.max(5, Math.min(500, Math.round(BASE_XP * xpMultiplier)));
 
     user.experience += XP_PER_SPIN;
 

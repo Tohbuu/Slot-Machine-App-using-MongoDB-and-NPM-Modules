@@ -741,7 +741,7 @@ class RewardManager {
 const MAX_LEVEL = 100;
 
 function getXpForLevel(level) {
-  return 100 + level * 50;
+ return 100 + level * 50;
 }
 
 // Update user info in header (avatar and balance)

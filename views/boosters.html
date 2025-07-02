@@ -15,13 +15,21 @@
   <div class="container">
     <header>
       <div class="logo">NEON SPIN</div>
+      <button class="nav-toggle" aria-label="Toggle navigation">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
       <nav class="nav-menu">
         <a href="/" class="nav-link">Play</a>
         <a href="/boosters" class="nav-link active">Boosters</a>
-        <a href="/rewards" class="nav-link">Rewards</a>
+        <a href="/rewards" class="nav-link rewards-nav-link">
+          Rewards
+          <span class="notification-dot" id="rewards-notification" style="display: none;"></span>
+        </a>
         <a href="/profile" class="nav-link">Profile</a>
-        <a href="/logout" class="nav-link">Logout</a>
         <a href="/leaderboard" class="nav-link">Leaderboard</a>
+        <a href="/logout" class="nav-link">Logout</a>
       </nav>
       <div class="user-info">
         <div class="user-avatar-dropdown">
@@ -155,5 +163,6 @@
   <script src="/js/boosters.js"></script>
   <script src="/js/avatar-decorations.js"></script>
   <script src="/js/reward-notification.js"></script>
+  <script src="/js/mobile-nav.js"></script>
 </body>
 </html>

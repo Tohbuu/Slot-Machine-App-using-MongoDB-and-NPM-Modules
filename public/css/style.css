@@ -145,7 +145,7 @@ header {
 }
 
 /* 3D Reels - Merged from second code */
-.reel {
+/* .reel {
   width: 120px;
   height: 160px;
   background: rgba(0, 0, 0, 0.3);
@@ -156,9 +156,9 @@ header {
   box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5), 0 0 20px rgba(110, 72, 170, 0.5);
   border: 2px solid var(--primary-color);
   transition: transform 0.1s;
-}
+} */
 
-.reel-face {
+/* .reel-face {
   position: absolute;
   width: 100%;
   height: 100%;
@@ -168,24 +168,24 @@ header {
   backface-visibility: hidden;
   background: rgba(0, 0, 0, 0.3);
   border-radius: 10px;
-}
+} */
 
 /* Card spin animation for slot symbols */
 @keyframes card-spin {
-  0%   { transform: rotateY(0deg); }
-  80%  { transform: rotateY(360deg); }
-  100% { transform: rotateY(360deg); }
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+  100% { transform: scaleY(1); }
 }
 
 .reel-face.spinning {
   animation: card-spin 0.5s linear;
 }
 
-.reel-symbol {
+/* .reel-symbol {
   max-width: 80%;
   max-height: 80%;
   object-fit: contain;
-}
+} */
 
 .controls {
   display: flex;
@@ -797,6 +797,44 @@ header {
 
 /* Responsive */
 @media (max-width: 768px) {
+  header {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0;
+    position: relative;
+  }
+
+  .logo {
+    font-size: 1.3rem;
+    margin-bottom: 0;
+    margin-right: 10px;
+  }
+
+  .nav-menu {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 1rem;
+    order: 1;
+    align-items: center;
+  }
+
+  .user-info {
+    order: 2;
+    margin-left: auto;
+    align-self: flex-start;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+  }
+}
+
+@media (max-width: 768px) {
   .reel {
     width: 100px;
     height: 100px;
@@ -1073,5 +1111,131 @@ header {
   to {
     transform: translateX(100%);
     opacity: 0;
+  }
+}
+
+/* Add to public/css/style.css or a relevant CSS file */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-template-rows: repeat(3, 100px);
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+.slot-cell {
+  width: 100px;
+  height: 100px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.slot-cell img {
+  max-width: 80%;
+  max-height: 80%;
+  animation: card-spin 0.5s linear;
+}
+
+/* Add to public/css/style.css */
+.slot-cell img.spinning {
+  animation: card-spin 0.5s linear;
+}
+
+/* Responsive Slot Grid */
+.slot-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(60px, 1fr));
+  grid-template-rows: repeat(3, minmax(60px, 1fr));
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 340px;
+  margin: 0 auto;
+}
+
+.slot-cell {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  min-width: 60px;
+  min-height: 60px;
+  max-width: 100px;
+  max-height: 100px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.slot-cell img {
+  max-width: 80%;
+  max-height: 80%;
+  animation: card-spin 0.5s linear;
+}
+
+/* Responsive Controls */
+@media (max-width: 600px) {
+  .slot-machine {
+    padding: 10px;
+  }
+  .slot-grid {
+    max-width: 220px;
+    gap: 6px;
+  }
+  .slot-cell {
+    min-width: 40px;
+    min-height: 40px;
+    max-width: 60px;
+    max-height: 60px;
+  }
+  .controls {
+    gap: 10px;
+  }
+  .bet-controls {
+    gap: 8px;
+  }
+  .spin-btn {
+    padding: 10px 0;
+    font-size: 1rem;
+    width: 100%;
+    border-radius: 30px;
+  }
+}
+
+/* Tablet */
+@media (min-width: 601px) and (max-width: 900px) {
+  .slot-grid {
+    max-width: 280px;
+    gap: 8px;
+  }
+  .slot-cell {
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 80px;
+    max-height: 80px;
+  }
+}
+
+/* Responsive user-avatar for mobile */
+@media (max-width: 600px) {
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    border-width: 1.5px;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 601px) {
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-width: 2px;
   }
 }
