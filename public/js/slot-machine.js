@@ -585,3 +585,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 });
+
+// Add this after successful spin
+if (window.ActivityTracker) {
+  window.ActivityTracker.track('slot_spin', `Spun slot machine (Bet: ${bet} credits)`, {
+    bet: bet,
+    win: winAmount,
+    isJackpot: isJackpot,
+    symbols: symbols
+  });
+}

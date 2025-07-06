@@ -119,6 +119,21 @@ class BoosterManager {
         this.updateBankBalance();
         await this.loadBoosters();
         await this.loadActiveBoosters();
+        document.dispatchEvent(new CustomEvent('boosterPurchased', {
+          detail: {
+            boosterName: booster.name,
+            price: booster.price,
+            type: booster.type
+          }
+        }));
+        // Add this after successful purchase
+        if (window.ActivityTracker) {
+          window.ActivityTracker.track('booster_purchase', `Purchased ${boosterName} for ${price} credits`, {
+            boosterName: boosterName,
+            price: price,
+            type: boosterType
+          });
+        }
       } else {
         alert(result.error || 'Purchase failed');
       }

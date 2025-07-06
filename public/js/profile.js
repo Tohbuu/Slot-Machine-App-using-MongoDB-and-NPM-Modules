@@ -1,56 +1,3 @@
-// Complete the missing avatar upload functionality
-function uploadAvatar(file) {
-  const formData = new FormData();
-  formData.append('avatar', file);
-
-  const saveBtn = document.querySelector('.avatar-save-btn');
-  if (saveBtn) {
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Saving...';
-  }
-
-  fetch('/api/user/avatar', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    },
-    body: formData
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Avatar';
-      }
-      if (data.success) {
-        showMessage('Avatar updated successfully!', true);
-        // Update profile avatar in header and everywhere
-        const profileAvatar = document.querySelector('.profile-avatar');
-        if (profileAvatar) {
-          profileAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-        }
-        const headerAvatar = document.querySelector('.user-avatar');
-        if (headerAvatar) {
-          headerAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-        }
-        const avatarPreview = document.querySelector('.avatar-preview');
-        if (avatarPreview) {
-          avatarPreview.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-        }
-        if (saveBtn) saveBtn.remove();
-      } else {
-        showMessage(data.error || 'Failed to upload avatar', false);
-      }
-    })
-    .catch(error => {
-      if (saveBtn) {
-        saveBtn.disabled = false;
-        saveBtn.textContent = 'Save Avatar';
-      }
-      showMessage('Error uploading avatar', false);
-    });
-}
-
 // Complete the profile form handler
 function handleProfileUpdate(e) {
   e.preventDefault();
@@ -567,76 +514,48 @@ function setupAvatarUpload() {
   });
 }
 
-// function uploadAvatar(file) {
-//   const formData = new FormData();
-//   formData.append('avatar', file);
-
-//   const saveBtn = document.querySelector('.avatar-save-btn');
-//   if (saveBtn) {
-//     saveBtn.disabled = true;
-//     saveBtn.textContent = 'Saving...';
-//   }
-
-//   fetch('/api/users/avatar', {
-//     method: 'POST',
-//     headers: {
-//       'Authorization': `Bearer ${localStorage.getItem('token')}`
-//     },
-//     body: formData
-//   })
-//     .then(response => response.json())
-//     .then(data => {
-//       if (saveBtn) {
-//         saveBtn.disabled = false;
-//         saveBtn.textContent = 'Save Avatar';
-//       }
-//       if (data.success) {
-//         showMessage('Avatar updated successfully!', true);
-//         // Update profile avatar in header and everywhere
-//         const profileAvatar = document.querySelector('.profile-avatar');
-//         if (profileAvatar) {
-//           profileAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-//         }
-//         const headerAvatar = document.querySelector('.user-avatar');
-//         if (headerAvatar) {
-//           headerAvatar.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-//         }
-//         const avatarPreview = document.querySelector('.avatar-preview');
-//         if (avatarPreview) {
-//           avatarPreview.src = `/images/avatars/${data.profilePicture || 'default.png'}?t=${Date.now()}`;
-//         }
-//         if (saveBtn) saveBtn.remove();
-//       } else {
-//         showMessage(data.error || 'Failed to upload avatar', false);
-//       }
-//     })
-//     .catch(error => {
-//       if (saveBtn) {
-//         saveBtn.disabled = false;
-//         saveBtn.textContent = 'Save Avatar';
-//       }
-//       showMessage('Error uploading avatar', false);
-//     });
-// }
-
-function showMessage(message, isSuccess) {
-  // Remove existing messages
-  document.querySelectorAll('.profile-message').forEach(msg => msg.remove());
+// Improved message display function to prevent duplicates
+let messageTimeout;
+function showMessage(message, isSuccess = true) {
+  // Clear any existing message timeout
+  if (messageTimeout) {
+    clearTimeout(messageTimeout);
+  }
+  
+  // Remove any existing messages
+  const existingMessages = document.querySelectorAll('.profile-message');
+  existingMessages.forEach(msg => msg.remove());
   
   const messageEl = document.createElement('div');
   messageEl.className = `profile-message ${isSuccess ? 'success' : 'error'}`;
-  messageEl.innerHTML = `
-    <i class="fas ${isSuccess ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-    <span>${message}</span>
+  messageEl.textContent = message;
+  
+  // Add styles
+  messageEl.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 12px 20px;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    z-index: 10000;
+    animation: slideIn 0.3s ease-out;
+    background: ${isSuccess ? '#4CAF50' : '#f44336'};
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
   `;
   
   document.body.appendChild(messageEl);
   
-  // Auto-remove after 4 seconds
-  setTimeout(() => {
-    messageEl.style.animation = 'slideOutRight 0.3s ease';
-    setTimeout(() => messageEl.remove(), 300);
-  }, 4000);
+  // Auto remove after 3 seconds
+  messageTimeout = setTimeout(() => {
+    messageEl.style.animation = 'slideOut 0.3s ease-in';
+    setTimeout(() => {
+      if (messageEl.parentNode) {
+        messageEl.remove();
+      }
+    }, 300);
+  }, 3000);
 }
 
 // Update header info (avatar and balance)

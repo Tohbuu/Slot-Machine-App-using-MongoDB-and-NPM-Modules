@@ -72,4 +72,82 @@ router.post('/avatar', auth, upload.single('avatar'), async (req, res) => {
   }
 });
 
+// Get user activities
+router.get('/activities', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('activities');
+    
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    // Sort activities by timestamp (newest first)
+    const activities = (user.activities || [])
+      .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+      .slice(0, 50); // Limit to 50 most recent
+
+    res.json({
+      success: true,
+      activities
+    });
+  } catch (error) {
+    console.error('Error fetching activities:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Server error'
+    });
+  }
+});
+
+// Add new activity
+router.post('/activity', auth, async (req, res) => {
+  try {
+    const { type, description, data } = req.body;
+    
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        error: 'User not found'
+      });
+    }
+
+    // Initialize activities array if it doesn't exist
+    if (!user.activities) {
+      user.activities = [];
+    }
+
+    // Add new activity
+    const activity = {
+      type,
+      description,
+      data,
+      timestamp: new Date()
+    };
+
+    user.activities.unshift(activity);
+
+    // Keep only the last 100 activities
+    if (user.activities.length > 100) {
+      user.activities = user.activities.slice(0, 100);
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      activity
+    });
+  } catch (error) {
+    console.error('Error saving activity:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Server error'
+    });
+  }
+});
+
 module.exports = router;

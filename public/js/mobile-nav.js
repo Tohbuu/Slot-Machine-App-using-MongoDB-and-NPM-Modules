@@ -294,11 +294,6 @@ class MobileNavigation {
 let mobileNav;
 try {
   mobileNav = new MobileNavigation();
-  
-  // Make it globally accessible for debugging
-  if (typeof window !== 'undefined') {
-    window.mobileNav = mobileNav;
-  }
 } catch (error) {
   console.error('Failed to initialize mobile navigation:', error);
 }
