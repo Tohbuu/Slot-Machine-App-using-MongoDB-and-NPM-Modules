@@ -656,45 +656,6 @@
   }
 }
 
-/* Rest of existing mobile styles... */
-.slot-machine,
-.reels-container,
-.slot-grid,
-.slot-cell,
-.controls,
-.bet-controls,
-.payline-controls,
-.spin-btn,
-.container,
-.section-header h2,
-.bank-section,
-.profile-section,
-.booster-section,
-.rewards-section,
-.profile-header,
-.profile-avatar,
-.avatar-preview,
-.profile-stats,
-.theme-selector,
-.theme-option,
-.leaderboard-table,
-.table-header,
-.table-row,
-.level,
-.player,
-.player-avatar,
-.section-title,
-.jackpot-info,
-.jackpot-amount,
-.form-row,
-.form-col,
-.avatar-upload,
-.avatar-upload-btn,
-.avatar-save-btn,
-.progress-bar {
-  /* Keep existing styles from previous mobile.css */
-}
-
 /* Desktop - Hide nav toggle */
 @media (min-width: 769px) {
   .nav-toggle {
