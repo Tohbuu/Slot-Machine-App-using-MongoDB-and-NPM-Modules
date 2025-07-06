@@ -68,6 +68,12 @@ header {
   display: flex;
   align-items: center;
   gap: 15px;
+  position: relative;
+}
+
+.user-avatar-dropdown {
+  position: relative;
+  display: inline-block;
 }
 
 .user-avatar {
@@ -76,23 +82,16 @@ header {
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid var(--primary);
-  box-shadow: var(--neon-glow);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  display: block;
 }
 
-.balance {
-  background: rgba(0, 0, 0, 0.5);
-  padding: 8px 15px;
-  border-radius: 20px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 5px;
+.user-avatar:hover {
+  transform: scale(1.05);
 }
 
-.balance-amount {
-  color: var(--accent);
-}
-
+.balance,
 .bank {
   background: rgba(0, 0, 0, 0.5);
   padding: 8px 15px;
@@ -100,12 +99,88 @@ header {
   font-weight: 700;
   display: flex;
   align-items: center;
-  margin-left: 10px;
+  gap: 5px;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.balance:hover,
+.bank:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.balance-amount,
+.bank-amount {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.balance-amount {
+  color: var(--accent);
 }
 
 .bank-amount {
   color: var(--primary);
-  margin-left: 5px;
+}
+
+/* User Dropdown Menu */
+.user-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 20px;
+  min-width: 300px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.user-dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Responsive user info adjustments */
+@media (max-width: 900px) {
+  .user-info {
+    gap: 12px;
+  }
+  
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .balance,
+  .bank {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-info {
+    gap: 8px;
+  }
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .balance,
+  .bank {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
 }
 
 /* Slot Machine Styles */

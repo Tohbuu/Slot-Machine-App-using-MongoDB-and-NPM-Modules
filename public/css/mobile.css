@@ -44,12 +44,14 @@
     flex-wrap: nowrap;
     padding: 15px 10px;
     position: relative;
+    min-height: 70px;
   }
   
   .logo {
     font-size: 1.3rem;
     margin: 0 10px 0 0;
     order: 1;
+    flex-shrink: 0;
   }
   
   .nav-menu {
@@ -95,160 +97,602 @@
     color: white;
   }
   
+  /* User Info - Mobile Optimized */
   .user-info {
     order: 2;
     margin-left: auto;
     margin-right: 10px;
     align-self: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    position: relative;
   }
   
-  /* Slot Machine */
-  .reels-container {
+  /* User Avatar Dropdown - Mobile */
+  .user-avatar-dropdown {
+    position: relative;
+    display: inline-block;
+    flex-shrink: 0;
+  }
+  
+  .user-avatar {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary);
+    cursor: pointer;
+    transition: transform 0.3s ease;
+  }
+  
+  .user-avatar:hover {
+    transform: scale(1.05);
+  }
+  
+  /* Balance and Bank - Mobile Responsive */
+  .balance,
+  .bank {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 6px 10px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    min-width: 0;
+    flex-shrink: 1;
+  }
+  
+  .balance-amount,
+  .bank-amount {
+    color: var(--accent);
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 60px;
+  }
+  
+  /* User Dropdown Menu - Mobile */
+  .user-dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 15px;
+    min-width: 280px;
+    max-width: calc(100vw - 20px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .user-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  
+  /* Dropdown Content - Mobile */
+  .dropdown-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  .dropdown-avatar-container {
+    flex-shrink: 0;
+  }
+  
+  .dropdown-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+  }
+  
+  .dropdown-user-info {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .dropdown-username {
+    color: var(--text);
+    font-weight: bold;
+    font-size: 1rem;
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  
+  .dropdown-level {
+    color: #ccc;
+    font-size: 0.85rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  
+  .dropdown-section {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--card-border);
+  }
+  
+  .dropdown-section:last-of-type {
+    border-bottom: none;
+  }
+  
+  .section-title {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 0.8rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  
+  .status-options {
+    display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
   }
   
-  .slot-grid {
-    max-width: 240px;
+  .status-option {
+    display: flex;
+    align-items: center;
+    padding: 6px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    font-size: 0.9rem;
+  }
+  
+  .status-option:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+  
+  .status-option.active {
+    background: var(--primary);
+    color: white;
+  }
+  
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+  
+  .status-dot.online {
+    background: var(--success);
+  }
+  
+  .status-dot.away {
+    background: var(--warning);
+  }
+  
+  .status-dot.busy {
+    background: var(--danger);
+  }
+  
+  .frame-preview-mini,
+  .badge-preview-mini {
+    padding: 6px;
     gap: 8px;
   }
   
-  .slot-cell {
-    min-width: 60px;
-    min-height: 60px;
-    max-width: 80px;
-    max-height: 80px;
+  .mini-avatar-container {
+    width: 30px;
+    height: 30px;
   }
   
-  .controls {
-    gap: 15px;
-  }
-  
-  .bet-controls, 
-  .payline-controls {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-  
-  .spin-btn {
+  .mini-avatar {
     width: 100%;
-    padding: 12px 0;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .frame-name-display,
+  .badge-name-display {
+    font-size: 0.8rem;
+  }
+  
+  .milestone-progress {
+    padding: 8px;
+  }
+  
+  .milestone-info {
+    font-size: 0.75rem;
+    margin-bottom: 5px;
+  }
+  
+  .milestone-level {
+    color: var(--accent);
+    font-weight: bold;
+  }
+  
+  .milestone-reward {
+    color: var(--text);
+  }
+  
+  .milestone-progress-bar {
+    height: 3px;
+    margin-bottom: 5px;
+  }
+  
+  .milestone-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--primary));
+    transition: width 0.3s ease;
+  }
+  
+  .milestone-xp {
+    font-size: 0.7rem;
+  }
+  
+  .dropdown-actions {
+    padding: 10px 0 0 0;
+    gap: 5px;
+  }
+  
+  .dropdown-action {
+    padding: 6px 8px;
+    font-size: 0.85rem;
+    gap: 6px;
+  }
+  
+  .dropdown-action:hover {
+    background: rgba(110, 72, 170, 0.2);
+    color: var(--accent);
+  }
+  
+  .dropdown-action i {
+    width: 14px;
+  }
+}
+
+/* Extra Small Mobile Screens */
+@media (max-width: 360px) {
+  header {
+    padding: 10px 6px;
+  }
+  
+  .logo {
     font-size: 1.1rem;
+    margin-right: 6px;
   }
   
-  /* Sections */
-  .container {
-    padding: 0 10px;
+  .user-info {
+    gap: 3px;
+    margin-right: 6px;
   }
   
-  .section-header h2 {
-    font-size: 1.3rem;
+  .user-avatar {
+    width: 26px;
+    height: 26px;
+    min-width: 26px;
+    min-height: 26px;
+    border-width: 1px;
   }
   
-  .bank-section, 
-  .profile-section, 
-  .booster-section, 
-  .rewards-section {
-    padding: 15px 10px;
-    margin: 15px 0;
+  .balance {
+    padding: 3px 5px;
+    font-size: 0.65rem;
+    border-radius: 8px;
   }
   
-  /* Profile */
-  .profile-header {
-    flex-direction: column;
-    gap: 15px;
-    text-align: center;
+  .balance-amount {
+    font-size: 0.65rem;
+    max-width: 35px;
   }
   
-  .profile-avatar, 
-  .avatar-preview {
-    width: 100px;
-    height: 100px;
+  /* Hide bank completely on extra small screens */
+  .bank {
+    display: none !important;
   }
   
-  .profile-stats {
-    justify-content: center;
-    flex-wrap: wrap;
+  .user-dropdown-menu {
+    min-width: 220px;
+    max-width: calc(100vw - 12px);
+    padding: 8px;
+    right: -8px;
   }
   
-  .theme-selector {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 10px;
+  .dropdown-header {
+    gap: 8px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
   }
   
-  .theme-option {
-    width: 45px;
-    height: 45px;
+  .dropdown-avatar {
+    width: 32px;
+    height: 32px;
   }
   
-  /* Leaderboard */
-  .leaderboard-table {
-    overflow-x: auto;
-    display: block;
-    width: 100%;
+  .dropdown-username {
+    font-size: 0.85rem;
   }
   
-  .table-header, 
-  .table-row {
-    grid-template-columns: 40px 1.5fr 1fr;
-    min-width: 400px;
-    font-size: 0.9rem;
-    padding: 10px;
+  .dropdown-level {
+    font-size: 0.7rem;
+    padding: 1px 4px;
   }
   
-  .level {
-    display: none;
+  .dropdown-section {
+    padding: 8px 0;
   }
   
-  .player {
-    gap: 10px;
+  .section-title {
+    font-size: 0.7rem;
+    margin-bottom: 5px;
   }
   
-  .player-avatar {
+  .status-option {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+  }
+  
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    margin-right: 5px;
+  }
+  
+  .frame-preview-mini,
+  .badge-preview-mini {
+    padding: 5px;
+    gap: 6px;
+  }
+  
+  .mini-avatar-container {
     width: 28px;
     height: 28px;
   }
   
-  .section-title {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
+  .frame-name-display,
+  .badge-name-display {
+    font-size: 0.75rem;
   }
   
-  .jackpot-info {
-    margin-bottom: 20px;
+  .milestone-progress {
+    padding: 6px;
   }
   
-  .jackpot-amount {
-    font-size: 2rem;
+  .milestone-info {
+    font-size: 0.7rem;
+    margin-bottom: 4px;
   }
   
-  /* Forms */
-  .form-row {
-    flex-direction: column;
-    gap: 15px;
+  .milestone-progress-bar {
+    height: 2px;
+    margin-bottom: 4px;
   }
   
-  .form-col {
-    width: 100%;
+  .milestone-xp {
+    font-size: 0.65rem;
   }
   
-  /* Avatar Upload */
-  .avatar-upload {
-    margin-top: 20px;
+  .dropdown-actions {
+    padding: 8px 0 0 0;
+    gap: 4px;
   }
   
-  .avatar-upload-btn,
-  .avatar-save-btn {
-    width: 100%;
-    text-align: center;
+  .dropdown-action {
+    padding: 5px 6px;
+    font-size: 0.8rem;
+    gap: 5px;
   }
   
-  /* Utility */
-  .progress-bar {
-    height: 8px;
+  .dropdown-action i {
+    width: 12px;
   }
+}
+
+/* Landscape Mobile Orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+  header {
+    padding: 8px 10px;
+    min-height: 50px;
+  }
+  
+  .nav-menu {
+    top: 50px;
+    max-height: calc(100vh - 50px);
+  }
+  
+  .user-info {
+    gap: 6px;
+  }
+  
+  .user-avatar {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+  }
+  
+  .balance,
+  .bank {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+  }
+  
+  .user-dropdown-menu {
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (max-width: 768px) {
+  .user-avatar-dropdown {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .user-avatar {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  .status-option,
+  .dropdown-action {
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px; /* iOS recommended touch target size */
+    display: flex;
+    align-items: center;
+  }
+  
+  .nav-toggle {
+    -webkit-tap-highlight-color: transparent;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .nav-link {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* High DPI screens */
+@media (max-width: 768px) and (-webkit-min-device-pixel-ratio: 2) {
+  .user-avatar,
+  .dropdown-avatar,
+  .mini-avatar {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Accessibility improvements for mobile */
+@media (max-width: 768px) {
+  .user-dropdown-menu {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .balance-amount,
+  .bank-amount {
+    font-size: max(0.7rem, 14px); /* Ensure minimum readable size */
+  }
+  
+  /* Focus states for keyboard navigation */
+  .user-avatar:focus,
+  .nav-toggle:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  
+  .status-option:focus,
+  .dropdown-action:focus {
+    outline: 1px solid var(--accent);
+    outline-offset: 1px;
+  }
+}
+
+/* Dark mode adjustments for mobile */
+@media (max-width: 768px) and (prefers-color-scheme: dark) {
+  .user-dropdown-menu {
+    background: rgba(20, 20, 30, 0.95);
+    backdrop-filter: blur(20px);
+  }
+  
+  .dropdown-section {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Reduced motion preferences */
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .user-avatar,
+  .user-dropdown-menu,
+  .nav-toggle-bar,
+  .status-option,
+  .dropdown-action {
+    transition: none !important;
+    animation: none !important;
+  }
+  
+  .user-avatar:hover {
+    transform: none;
+  }
+}
+
+/* Print styles for mobile */
+@media print {
+  .nav-toggle,
+  .user-dropdown-menu,
+  .nav-menu {
+    display: none !important;
+  }
+  
+  .user-info {
+    display: flex !important;
+    position: static !important;
+  }
+  
+  .balance,
+  .bank {
+    background: transparent !important;
+    color: black !important;
+  }
+}
+
+/* Rest of existing mobile styles... */
+.slot-machine,
+.reels-container,
+.slot-grid,
+.slot-cell,
+.controls,
+.bet-controls,
+.payline-controls,
+.spin-btn,
+.container,
+.section-header h2,
+.bank-section,
+.profile-section,
+.booster-section,
+.rewards-section,
+.profile-header,
+.profile-avatar,
+.avatar-preview,
+.profile-stats,
+.theme-selector,
+.theme-option,
+.leaderboard-table,
+.table-header,
+.table-row,
+.level,
+.player,
+.player-avatar,
+.section-title,
+.jackpot-info,
+.jackpot-amount,
+.form-row,
+.form-col,
+.avatar-upload,
+.avatar-upload-btn,
+.avatar-save-btn,
+.progress-bar {
+  /* Keep existing styles from previous mobile.css */
 }
 
 /* Desktop - Hide nav toggle */
@@ -273,34 +717,44 @@
     padding: 8px 15px !important;
     border-bottom: none !important;
     border-radius: 5px;
-  }
-}
-
-/* Specific override for very small screens */
-@media (max-width: 480px) {
-  .slot-grid {
-    max-width: 200px;
+    min-height: auto !important;
   }
   
-  .slot-cell {
-    min-width: 50px;
-    min-height: 50px;
+  .user-info {
+    order: initial !important;
+    margin: 0 !important;
+    gap: 15px !important;
   }
   
   .user-avatar {
-    width: 30px;
-    height: 30px;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    border-width: 2px !important;
   }
   
-  .balance, 
+  .balance,
   .bank {
-    padding: 6px 10px;
-    font-size: 0.9rem;
+    padding: 8px 15px !important;
+    font-size: 1rem !important;
+    border-radius: 20px !important;
   }
   
-  .table-header, 
-  .table-row {
-    min-width: 350px;
-    font-size: 0.8rem;
+  .balance-amount,
+  .bank-amount {
+    font-size: 1rem !important;
+    max-width: none !important;
+  }
+  
+  .bank {
+    display: flex !important;
+  }
+  
+  .user-dropdown-menu {
+    min-width: 300px !important;
+    max-width: none !important;
+    padding: 20px !important;
+    right: 0 !important;
   }
 }
