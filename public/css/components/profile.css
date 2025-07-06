@@ -9,6 +9,9 @@
   --danger: #f44336;
   --card-bg: rgba(30, 30, 46, 0.8);
   --card-border: rgba(110, 72, 170, 0.3);
+  /* added rgb values */
+  --primary-rgb: 110, 72, 170;
+  --accent-rgb: 71, 118, 230;
 }
 
 /* Cyberpunk Theme */
@@ -145,6 +148,8 @@
   padding: 15px;
   border-radius: 10px;
   backdrop-filter: blur(10px);
+  min-width: 0; /* Allow shrinking */
+  overflow: hidden;
 }
 
 .stat-icon {
@@ -160,12 +165,22 @@
 
 .stat-content {
   flex: 1;
+  min-width: 0; /* Important for flex items to shrink */
+  overflow: hidden;
 }
 
 .stat-value {
-  font-size: 1.5em;
+  font-size: 1em;
   font-weight: bold;
+  color: var(--text);
   margin-bottom: 2px;
+  line-height: 1.2;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .stat-label {
@@ -199,18 +214,53 @@
   transition: width 0.5s ease;
 }
 
-/* Game Statistics Section */
+/* Cyberpunk Game Statistics Section */
 .stats-section {
-  margin-bottom: 40px;
+   padding: 25px;
+  background: var(--card-bg);
+  border-radius: 15px;
+  box-shadow: 
+    0 0 15px rgba(var(--primary-rgb), 0.5),
+    0 0 30px rgba(var(--accent-rgb), 0.3) inset;
+  border: 1px solid var(--accent);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent, 
+    var(--accent), 
+    transparent);
+  animation: scanline 4s linear infinite;
+}
+
+
+@keyframes scanline {
+  0% { top: 0; }
+  100% { top: 100%; }
 }
 
 .stats-section h3 {
-  color: var(--primary);
-  margin-bottom: 20px;
-  font-size: 1.5em;
+   color: var(--accent);
+  margin-bottom: 25px;
+  font-size: 1.5rem;
   display: flex;
   align-items: center;
   gap: 10px;
+  text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.7);
+  font-family: 'Orbitron', sans-serif;
+}
+
+.stats-section h3::before {
+  content: '>>';
+  color: var(--accent);
 }
 
 .stats-grid {
@@ -223,57 +273,240 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  background: var(--card-bg-light);
+  background: rgba(20, 20, 40, 0.7);
   padding: 20px;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
-  transition: transform 0.3s ease;
+  border: 1px solid var(--card-border);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(5px);
+  min-width: 0; /* Allow shrinking */
 }
 
 .stat-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+   transform: translateY(-5px);
+  box-shadow: 
+    0 5px 15px rgba(var(--accent-rgb), 0.4),
+    0 0 10px rgba(var(--primary-rgb), 0.3) inset;
+  border-color: var(--accent);
 }
 
-.stat-item .stat-icon {
+.stat-item::after {
+   content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.03) 0%,
+    rgba(255,255,255,0) 50%,
+    rgba(255,255,255,0.03) 100%
+  );
+}
+
+.stat-icon {
   width: 50px;
   height: 50px;
   border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5em;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  box-shadow: 
+    0 0 10px rgba(0,0,0,0.5),
+    0 0 5px currentColor inset;
+  position: relative;
+  z-index: 1;
 }
 
-.stat-icon.games { background: linear-gradient(45deg, #4caf50, #45a049); }
-.stat-icon.wins { background: linear-gradient(45deg, #ffd700, #ffb300); }
-.stat-icon.jackpots { background: linear-gradient(45deg, #9c27b0, #673ab7); }
-.stat-icon.winrate { background: linear-gradient(45deg, #2196f3, #1976d2); }
-.stat-icon.bank { background: linear-gradient(45deg, #ff9800, #f57c00); }
-.stat-icon.boosters { background: linear-gradient(45deg, #e91e63, #c2185b); }
+.stat-icon::before {
+   content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border-radius: 12px;
+  background: inherit;
+  filter: blur(5px);
+  z-index: -1;
+  opacity: 0.7;
+}
+
+
+/* default themes for stats section */
+:root {
+  --primary-rgb: 110, 72, 170;
+  --accent-rgb: 71, 118, 230;
+}
+
+.stat-icon.games { 
+  background: linear-gradient(45deg, var(--success), #45a049);
+  color: white;
+}
+.stat-icon.wins { 
+  background: linear-gradient(45deg, #ffd700, #ffb300);
+  color: #000;
+}
+.stat-icon.jackpots { 
+  background: linear-gradient(45deg, var(--primary), var(--secondary));
+  color: white;
+}
+.stat-icon.winrate { 
+  background: linear-gradient(45deg, var(--accent), #1976d2);
+  color: white;
+}
+.stat-icon.bank { 
+  background: linear-gradient(45deg, #ff9800, #f57c00);
+  color: #000;
+}
+.stat-icon.boosters { 
+  background: linear-gradient(45deg, #e91e63, #c2185b);
+  color: white;
+}
+
+/* Cyberpunk Theme */
+.theme-cyber {
+  --primary-rgb: 0, 210, 255;
+  --accent-rgb: 255, 0, 255;
+}
+
+.theme-cyber .stat-icon.games { 
+  background: linear-gradient(45deg, #39ff14, #00a86b);
+  color: #000;
+}
+.theme-cyber .stat-icon.wins { 
+  background: linear-gradient(45deg, #ff00ff, #ff0066);
+  color: white;
+}
+.theme-cyber .stat-icon.jackpots { 
+  background: linear-gradient(45deg, #9c27b0, #00d4ff);
+  color: white;
+}
+.theme-cyber .stat-icon.winrate { 
+  background: linear-gradient(45deg, #00ffff, #4776e6);
+  color: #000;
+}
+.theme-cyber .stat-icon.bank { 
+  background: linear-gradient(45deg, #ff9a00, #ff5100);
+  color: #000;
+}
+.theme-cyber .stat-icon.boosters { 
+  background: linear-gradient(45deg, #ff00aa, #ff0066);
+  color: white;
+}
+
+/* Neon Theme */
+.theme-neon {
+  --primary-rgb: 57, 255, 20;
+  --accent-rgb: 255, 0, 127;
+}
+
+.theme-neon .stat-icon.games { 
+  background: linear-gradient(45deg, #39ff14, #00ff88);
+  color: #000;
+}
+.theme-neon .stat-icon.wins { 
+  background: linear-gradient(45deg, #ff00ff, #ff00aa);
+  color: white;
+}
+.theme-neon .stat-icon.jackpots { 
+  background: linear-gradient(45deg, #a500ff, #ff00ff);
+  color: white;
+}
+.theme-neon .stat-icon.winrate { 
+  background: linear-gradient(45deg, #00ffff, #00aaff);
+  color: #000;
+}
+.theme-neon .stat-icon.bank { 
+  background: linear-gradient(45deg, #ff9a00, #ff0055);
+  color: white;
+}
+.theme-neon .stat-icon.boosters { 
+  background: linear-gradient(45deg, #ff007f, #ff00aa);
+  color: white;
+}
+
+/* Dark Mode Theme */
+.theme-dark {
+  --primary-rgb: 51, 51, 51;
+  --accent-rgb: 187, 134, 252;
+}
+
+.theme-dark .stat-icon.games { 
+  background: linear-gradient(45deg, #4caf50, #388e3c);
+  color: white;
+}
+.theme-dark .stat-icon.wins { 
+  background: linear-gradient(45deg, #bb86fc, #9c64f6);
+  color: white;
+}
+.theme-dark .stat-icon.jackpots { 
+  background: linear-gradient(45deg, #673ab7, #5e35b1);
+  color: white;
+}
+.theme-dark .stat-icon.winrate { 
+  background: linear-gradient(45deg, #2196f3, #1e88e5);
+  color: white;
+}
+.theme-dark .stat-icon.bank { 
+  background: linear-gradient(45deg, #ff9800, #fb8c00);
+  color: white;
+}
+.theme-dark .stat-icon.boosters { 
+  background: linear-gradient(45deg, #e91e63, #d81b60);
+  color: white;
+}
+
 
 .stat-info {
   flex: 1;
-  min-width: 0; /* Prevents flex item from overflowing */
+  min-width: 0;
+  position: relative;
+  overflow: hidden;
 }
 
 .stat-number {
-  font-size: 1.6em;
+  font-size: 1.6rem;
   font-weight: bold;
-  color: var(--text-primary);
+  color: var(--text);
   margin-bottom: 5px;
   line-height: 1.2;
-  word-break: break-word; /* Prevents long numbers from overflowing */
+  font-family: 'Orbitron', sans-serif;
+  text-shadow: 0 0 5px rgba(var(--accent-rgb), 0.5);
+  word-break: break-word;
+  overflow-wrap: break-word;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .stat-name {
-  color: var(--text-secondary);
-  font-size: 0.9em;
+  color: var(--text);
+  font-size: 0.9rem;
   line-height: 1.3;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
+  font-family: 'Courier New', monospace;
+  position: relative;
   opacity: 0.8;
 }
+
+.stat-name::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+
 
 /* Desktop optimizations */
 @media (min-width: 1025px) {
@@ -643,6 +876,7 @@
 
 .theme-option {
   height: 80px;
+  width: auto;
   border-radius: 10px;
   cursor: pointer;
   border: 3px solid transparent;

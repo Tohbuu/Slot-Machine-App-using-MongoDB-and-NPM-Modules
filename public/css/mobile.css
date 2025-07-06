@@ -1,173 +1,7 @@
 @media (max-width: 768px) {
-  /* Boosters */
-  .packs-container {
-    grid-template-columns: 1fr;
-  }
-  
-  .boosters-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  /* Rewards */
-  .rewards-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .reward-card {
-    padding: 10px;
-  }
-  
-  /* General */
-  .section-header h2 {
-    font-size: 1.1rem;
-  }
-
-  .container {
-    padding: 0 5px;
-  }
-
-  header {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: 0;
-    position: relative;
-  }
-
-  .logo {
-    font-size: 1.3rem;
-    margin-bottom: 0;
-    margin-right: 10px;
-  }
-
-  .nav-menu {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-size: 1rem;
-    order: 1;
-    align-items: center;
-  }
-
-  .user-info {
-    order: 2;
-    margin-left: auto;
-    align-self: flex-start;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    position: relative;
-    z-index: 10;
-  }
-
-  .reels-container {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .reel {
-    width: 80px;
-    height: 100px;
-  }
-
-  .controls {
-    gap: 10px;
-  }
-
-  .bet-controls, .payline-controls {
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-
-  .spin-btn {
-    width: 100%;
-    font-size: 1.1rem;
-    padding: 12px 0;
-  }
-
-  .bank-section, .profile-section, .booster-section, .rewards-section {
-    padding: 10px;
-    margin: 10px 0;
-  }
-
-  .profile-header {
-    flex-direction: column;
-    gap: 15px;
-    align-items: center;
-  }
-
-  .profile-avatar, .avatar-preview {
-    width: 90px;
-    height: 90px;
-  }
-
-  .theme-selector {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
-  .theme-option {
-    width: 40px;
-    height: 40px;
-  }
-
-  .leaderboard-table, .table-header, .table-row {
-    display: grid;
-    grid-template-columns: 32px 1.5fr 1fr 1fr; /* Combine player name and avatar, reduce columns */
-    font-size: 0.95rem;
-    padding: 8px;
-    min-width: 350px;
-  }
-
-  .table-header .level,
-  .table-row .level {
-    display: none; /* Optionally hide level column on mobile for space */
-  }
-
-  .player {
-    gap: 8px;
-    font-size: 0.95rem;
-  }
-
-  .player-avatar {
-    width: 24px;
-    height: 24px;
-  }
-
-  .section-title {
-    font-size: 1.2rem;
-  }
-
-  .jackpot-info {
-    font-size: 1rem;
-    margin-bottom: 15px;
-  }
-
-  .container {
-    padding: 0 2px;
-  }
-
-  .leaderboard-table {
-    overflow-x: auto;
-    display: block;
-    width: 100%;
-  }
-
-  .table-header, .table-row {
-    min-width: 500px;
-  }
-
-  .progress-bar {
-    height: 10px;
-  }
-
-  /* Hamburger button styles */
+  /* Navigation Toggle - Make sure it's always visible on mobile */
   .nav-toggle {
-    display: none;
+    display: flex !important;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -178,74 +12,295 @@
     cursor: pointer;
     z-index: 1001;
     margin-left: auto;
+    order: 3;
   }
-
+  
   .nav-toggle-bar {
     width: 26px;
     height: 3px;
-    background: #fff;
-    margin: 4px 0;
+    background: var(--text);
+    margin: 3px 0;
     border-radius: 2px;
-    transition: all 0.3s;
+    transition: all 0.3s ease;
   }
-
-  /* Mobile nav styles */
-  @media (max-width: 768px) {
-    .nav-toggle {
-      display: flex;
-    }
-    .nav-menu {
-      position: absolute;
-      top: 60px;
-      left: 0;
-      right: 0;
-      background: #181828;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0;
-      padding: 0;
-      display: none;
-      z-index: 1000;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    }
-    .nav-menu.open {
-      display: flex;
-    }
-    .nav-link {
-      width: 100%;
-      padding: 16px 24px;
-      border-bottom: 1px solid #232345;
-      font-size: 1.1em;
-    }
-    .logo {
-      z-index: 1002;
-    }
-    header {
-      position: relative;
-      flex-wrap: wrap;
-    }
+  
+  /* Animate toggle when active */
+  .nav-toggle.active .nav-toggle-bar:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
   }
+  
+  .nav-toggle.active .nav-toggle-bar:nth-child(2) {
+    opacity: 0;
+  }
+  
+  .nav-toggle.active .nav-toggle-bar:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
+  
+  /* Header & Navigation */
+  header {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    padding: 15px 10px;
+    position: relative;
+  }
+  
+  .logo {
+    font-size: 1.3rem;
+    margin: 0 10px 0 0;
+    order: 1;
+  }
+  
+  .nav-menu {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    background: var(--background);
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    display: none;
+    z-index: 1000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    border-top: 1px solid var(--card-border);
+    order: 4;
+    width: 100%;
+    max-height: calc(100vh - 70px);
+    overflow-y: auto;
+  }
+  
+  .nav-menu.open {
+    display: flex !important;
+  }
+  
+  .nav-link {
+    width: 100%;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--card-border);
+    font-size: 1.1rem;
+    color: var(--text);
+    text-decoration: none;
+    transition: all 0.3s ease;
+    position: relative;
+  }
+  
+  .nav-link:hover {
+    background: rgba(110, 72, 170, 0.2);
+  }
+  
+  .nav-link.active {
+    background: var(--primary);
+    color: white;
+  }
+  
+  .user-info {
+    order: 2;
+    margin-left: auto;
+    margin-right: 10px;
+    align-self: center;
+  }
+  
+  /* Slot Machine */
+  .reels-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .slot-grid {
+    max-width: 240px;
+    gap: 8px;
+  }
+  
+  .slot-cell {
+    min-width: 60px;
+    min-height: 60px;
+    max-width: 80px;
+    max-height: 80px;
+  }
+  
+  .controls {
+    gap: 15px;
+  }
+  
+  .bet-controls, 
+  .payline-controls {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .spin-btn {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1.1rem;
+  }
+  
+  /* Sections */
+  .container {
+    padding: 0 10px;
+  }
+  
+  .section-header h2 {
+    font-size: 1.3rem;
+  }
+  
+  .bank-section, 
+  .profile-section, 
+  .booster-section, 
+  .rewards-section {
+    padding: 15px 10px;
+    margin: 15px 0;
+  }
+  
+  /* Profile */
+  .profile-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+  
+  .profile-avatar, 
+  .avatar-preview {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .profile-stats {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .theme-selector {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .theme-option {
+    width: 45px;
+    height: 45px;
+  }
+  
+  /* Leaderboard */
+  .leaderboard-table {
+    overflow-x: auto;
+    display: block;
+    width: 100%;
+  }
+  
+  .table-header, 
+  .table-row {
+    grid-template-columns: 40px 1.5fr 1fr;
+    min-width: 400px;
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+  
+  .level {
+    display: none;
+  }
+  
+  .player {
+    gap: 10px;
+  }
+  
+  .player-avatar {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .section-title {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+  }
+  
+  .jackpot-info {
+    margin-bottom: 20px;
+  }
+  
+  .jackpot-amount {
+    font-size: 2rem;
+  }
+  
+  /* Forms */
+  .form-row {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .form-col {
+    width: 100%;
+  }
+  
+  /* Avatar Upload */
+  .avatar-upload {
+    margin-top: 20px;
+  }
+  
+  .avatar-upload-btn,
+  .avatar-save-btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Utility */
+  .progress-bar {
+    height: 8px;
+  }
+}
 
-  /* Desktop nav styles */
-  @media (min-width: 769px) {
-    .nav-toggle {
-      display: none;
-    }
-    .nav-menu {
-      display: flex !important;
-      position: static;
-      flex-direction: row;
-      align-items: center;
-      background: none;
-      box-shadow: none;
-      gap: 20px;
-      padding: 0;
-    }
-    .nav-link {
-      padding: 8px 15px;
-      border-bottom: none;
-      width: auto;
-      font-size: 1em;
-    }
+/* Desktop - Hide nav toggle */
+@media (min-width: 769px) {
+  .nav-toggle {
+    display: none !important;
+  }
+  
+  .nav-menu {
+    display: flex !important;
+    position: static !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    flex-direction: row !important;
+    gap: 20px !important;
+    padding: 0 !important;
+  }
+  
+  .nav-link {
+    width: auto !important;
+    padding: 8px 15px !important;
+    border-bottom: none !important;
+    border-radius: 5px;
+  }
+}
+
+/* Specific override for very small screens */
+@media (max-width: 480px) {
+  .slot-grid {
+    max-width: 200px;
+  }
+  
+  .slot-cell {
+    min-width: 50px;
+    min-height: 50px;
+  }
+  
+  .user-avatar {
+    width: 30px;
+    height: 30px;
+  }
+  
+  .balance, 
+  .bank {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .table-header, 
+  .table-row {
+    min-width: 350px;
+    font-size: 0.8rem;
   }
 }

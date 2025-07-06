@@ -175,32 +175,37 @@ exports.spin = async (req, res) => {
       user.jackpotsWon = (user.jackpotsWon || 0) + 1;
     }
 
-    // Award experience for each spin (scales with bet and paylines)
-    const BASE_BET = 10;
-    const BASE_PAYLINES = 1;
-    const BASE_XP = 10;
+    // Award experience only for wins (scales with bet, paylines, and win amount)
+    const totalWinAmount = totalWin + scatterWin + jackpotAmount;
 
-    // Nonlinear boost for paylines
-    let xpMultiplier = (betPerLine / BASE_BET) * Math.pow(paylines.length / BASE_PAYLINES, 1.2);
+    // Only award XP if player actually won something
+    if (totalWinAmount > 0) {
+      const BASE_BET = 10;
+      const BASE_PAYLINES = 1;
+      const BASE_XP = 10;
 
-    // Apply active booster winMultiplier if present
-    let boosterMultiplier = 1;
-    if (user.activeBoosters && user.activeBoosters.length > 0) {
-      boosterMultiplier = Math.max(
-        ...user.activeBoosters.map(b => b.effects?.winMultiplier || 1)
-      );
-    }
-    xpMultiplier *= boosterMultiplier;
+      // Nonlinear boost for paylines
+      let xpMultiplier = (betPerLine / BASE_BET) * Math.pow(paylines.length / BASE_PAYLINES, 1.2);
 
-    // Calculate XP, clamp to min/max to avoid abuse
-    const XP_PER_SPIN = Math.max(5, Math.min(500, Math.round(BASE_XP * xpMultiplier)));
+      // Apply active booster winMultiplier if present
+      let boosterMultiplier = 1;
+      if (user.activeBoosters && user.activeBoosters.length > 0) {
+        boosterMultiplier = Math.max(
+          ...user.activeBoosters.map(b => b.effects?.winMultiplier || 1)
+        );
+      }
+      xpMultiplier *= boosterMultiplier;
 
-    user.experience += XP_PER_SPIN;
+      // Calculate XP, clamp to min/max to avoid abuse
+      const XP_PER_SPIN = Math.max(5, Math.min(500, Math.round(BASE_XP * xpMultiplier)));
 
-    // Level up logic: XP increases linearly with level
-    while (user.experience >= getXpForLevel(user.level)) {
-      user.experience -= getXpForLevel(user.level);
-      user.level += 1;
+      user.experience += XP_PER_SPIN;
+
+      // Level up logic: XP increases linearly with level
+      while (user.experience >= getXpForLevel(user.level)) {
+        user.experience -= getXpForLevel(user.level);
+        user.level += 1;
+      }
     }
 
     // Count a win if any payline pays out or scatterWin > 0 or jackpotWin
