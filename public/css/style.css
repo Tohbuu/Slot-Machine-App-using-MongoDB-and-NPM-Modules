@@ -148,6 +148,87 @@ header {
   transform: translateY(0);
 }
 
+/* Fullscreen dropdown menu for mobile */
+@media (max-width: 768px) {
+  .user-dropdown-menu {
+    position: absolute !important;
+    top: 110% !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 90vw !important;
+    max-width: 400px !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: 80vh !important;
+    border-radius: 18px !important;
+    padding: 18px 8px !important;
+    z-index: 2000 !important;
+    background: var(--card-bg, #181828);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35) !important;
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) !important;
+    overflow-y: auto;
+    display: block;
+  }
+  .user-dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%);
+  }
+}
+
+/* Optimize user-dropdown-menu for mobile */
+@media (max-width: 768px) {
+  .user-dropdown-menu {
+    min-width: 90vw;
+    max-width: 95vw;
+    right: 0;
+    left: auto;
+    padding: 14px 8px;
+    border-radius: 14px;
+    font-size: 1rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.35);
+    z-index: 1001;
+  }
+  .dropdown-header {
+    gap: 10px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+  }
+  .dropdown-avatar {
+    width: 44px;
+    height: 44px;
+  }
+  .dropdown-username {
+    font-size: 1.1rem;
+  }
+  .dropdown-level {
+    font-size: 0.9rem;
+  }
+  .dropdown-section {
+    padding: 10px 0;
+  }
+}
+
+/* Extra small screens */
+@media (max-width: 400px) {
+  .user-dropdown-menu {
+    min-width: 98vw;
+    max-width: 99vw;
+    padding: 8px 2px;
+  }
+  .dropdown-avatar {
+    width: 32px;
+    height: 32px;
+  }
+  .dropdown-username {
+    font-size: 1rem;
+  }
+}
+
 /* Responsive user info adjustments */
 @media (max-width: 900px) {
   .user-info {
@@ -180,6 +261,65 @@ header {
   .bank {
     padding: 5px 10px;
     font-size: 0.8rem;
+  }
+}
+
+/* Fine-tune for 720px screens and below */
+@media (max-width: 768px) {
+  .slot-grid {
+    max-width: 320px;
+    gap: 8px;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .bet-controls, .payline-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .spin-btn {
+    width: 100%;
+    padding: 12px 0;
+    font-size: 1.1rem;
+    border-radius: 30px;
+  }
+
+  .user-info {
+    flex-direction: row;
+    gap: 10px;
+    min-height: 44px;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .user-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .balance, .bank {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+  }
+}
+
+/* For extra small screens (e.g., 360px) */
+@media (max-width: 400px) {
+  .slot-grid {
+    max-width: 220px;
+    gap: 6px;
+  }
+  .spin-btn {
+    font-size: 1rem;
+    padding: 10px 0;
   }
 }
 
@@ -275,6 +415,21 @@ header {
   align-items: center;
 }
 
+.slot-cell.reel-spinning {
+  animation: reel-spin 0.5s linear infinite;
+  /* Optional: add a glow or shadow for effect */
+  box-shadow: 0 0 16px 2px #00d4ff55;
+}
+
+@keyframes reel-spin {
+  0%   { transform: translateY(0) scaleY(1); filter: blur(0.5px);}
+  20%  { transform: translateY(10%) scaleY(0.95); filter: blur(1.5px);}
+  40%  { transform: translateY(-10%) scaleY(1.05); filter: blur(2px);}
+  60%  { transform: translateY(10%) scaleY(0.95); filter: blur(1.5px);}
+  80%  { transform: translateY(-10%) scaleY(1.05); filter: blur(1px);}
+  100% { transform: translateY(0) scaleY(1); filter: blur(0.5px);}
+}
+
 .slot-cell img {
   max-width: 80%;
   max-height: 80%;
@@ -282,7 +437,14 @@ header {
 }
 
 .slot-cell img.spinning {
-  animation: card-spin 0.5s linear;
+  animation: symbol-spin 0.5s linear infinite;
+  filter: blur(2.5px) brightness(1.2);
+}
+
+@keyframes symbol-spin {
+  0%   { transform: scaleY(1); }
+  50%  { transform: scaleY(0.1); }
+  100% { transform: scaleY(1); }
 }
 
 .controls {
@@ -1212,4 +1374,32 @@ header {
 .avatar-save-btn:disabled {
   background: #555;
   cursor: not-allowed;
+}
+
+
+/* Default (desktop) style */
+.status-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 10px;
+  display: inline-block;
+  background: var(--success, #4caf50); /* fallback for online */
+  border: 2px solid #fff;
+  vertical-align: middle;
+}
+
+/* Status colors */
+.status-dot.online { background: var(--success, #4caf50); }
+.status-dot.away { background: var(--warning, #ff9800); }
+.status-dot.busy { background: var(--danger, #f44336); }
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    margin-right: 8px;
+    border-width: 1.5px;
+  }
 }

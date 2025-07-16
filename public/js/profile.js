@@ -572,13 +572,9 @@ function updateHeaderUserInfo() {
         const avatar = document.querySelector('.user-avatar');
         if (avatar) {
           avatar.src = `/images/avatars/${data.user.profilePicture || 'default.png'}`;
-          
-          // Refresh decorations after avatar update
           if (window.avatarDecorations) {
-            window.avatarDecorations.userData = data.user;
             window.avatarDecorations.userLevel = data.user.level || 1;
-            window.avatarDecorations.userUnlocks = data.user.unlocks || [];
-            window.avatarDecorations.applyDecorations();
+            window.avatarDecorations.updateGlobalUserFrame();
           }
         }
       }
@@ -655,9 +651,8 @@ function loadFramesCollection(unlocks) {
     return `
       <div class="collection-item frame-item ${frame.id.split('_')[0]} ${owned ? 'owned' : 'locked'}" 
            data-tooltip="${owned ? 'Owned' : `Unlock at Level ${frame.level}`}">
-        <div class="frame-preview">
-          <img src="/images/avatars/default.png" alt="Avatar">
-          <div class="frame-border ${frame.id}"></div>
+        <div class="frame-preview" style="position:relative;">
+          <img src="/images/frames/${frame.id}.svg" alt="${frame.name} Frame" class="frame-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none;">
         </div>
         <div class="collection-item-name">${frame.name}</div>
         <div class="collection-item-status">${owned ? 'Owned' : 'Locked'}</div>
@@ -670,19 +665,19 @@ function loadFramesCollection(unlocks) {
 function loadBadgesCollection(user) {
   const badgesContainer = document.getElementById('badges-collection');
   const badges = [
-    { id: 'bronze_badge', name: 'Bronze Badge', level: 25, icon: 'fa-award' },
-    { id: 'silver_badge', name: 'Silver Badge', level: 50, icon: 'fa-medal' },
-    { id: 'gold_badge', name: 'Gold Badge', level: 75, icon: 'fa-trophy' },
-    { id: 'legendary_badge', name: 'Legendary Badge', level: 100, icon: 'fa-crown' }
+    { id: 'bronze_badge', name: 'Bronze Badge', level: 25 },
+    { id: 'silver_badge', name: 'Silver Badge', level: 50 },
+    { id: 'gold_badge', name: 'Gold Badge', level: 75 },
+    { id: 'legendary_badge', name: 'Legendary Badge', level: 100 }
   ];
-  
+
   badgesContainer.innerHTML = badges.map(badge => {
     const owned = user.level >= badge.level;
     return `
       <div class="collection-item badge-item ${owned ? 'owned' : 'locked'}" 
            data-tooltip="${owned ? 'Owned' : `Unlock at Level ${badge.level}`}">
         <div class="badge-preview ${badge.id}">
-          <i class="fas ${badge.icon}"></i>
+          <img src="/images/badges/${badge.id}.svg" alt="${badge.name}" class="badge-svg" style="width:40px;height:40px;${owned ? '' : 'filter: grayscale(1);opacity:0.5;'}">
         </div>
         <div class="collection-item-name">${badge.name}</div>
         <div class="collection-item-status">${owned ? 'Owned' : 'Locked'}</div>

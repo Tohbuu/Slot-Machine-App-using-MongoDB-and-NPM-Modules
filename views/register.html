@@ -4,10 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register - Neon Spin</title>
+  
+  <!-- Favicon Links -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components/audio-controls.css">
   <link rel="stylesheet" href="/css/mobile.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
   <script type="module" src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/themes.css">
 </head>
 <body>
   <div class="auth-container">
@@ -39,6 +49,64 @@
     </div>
   </div>
   
+  <!-- Enhanced Audio Control Panel -->
+  <div class="audio-control-panel" id="audio-control-panel">
+    <button class="audio-toggle-btn" id="audio-toggle-btn" title="Audio Controls - Click to expand">
+      <div class="audio-icon-container">
+        <i class="fas fa-volume-up" id="audio-icon"></i>
+        <div class="audio-waves">
+          <span class="wave wave-1"></span>
+          <span class="wave wave-2"></span>
+          <span class="wave wave-3"></span>
+        </div>
+      </div>
+      <span class="audio-status-text" id="audio-status-text">ON</span>
+    </button>
+    
+    <div class="audio-dropdown" id="audio-dropdown">
+      <div class="audio-section">
+        <label class="audio-label">
+          <span>
+            <i class="fas fa-music"></i>
+            Background Music
+          </span>
+          <div class="volume-control">
+            <input type="range" class="volume-slider" id="music-volume" min="0" max="100" value="50">
+            <span class="volume-value" id="music-value">50%</span>
+          </div>
+        </label>
+      </div>
+      
+      <div class="audio-section">
+        <label class="audio-label">
+          <span>
+            <i class="fas fa-bell"></i>
+            Sound Effects
+          </span>
+          <div class="volume-control">
+            <input type="range" class="volume-slider" id="sfx-volume" min="0" max="100" value="70">
+            <span class="volume-value" id="sfx-value">70%</span>
+          </div>
+        </label>
+      </div>
+      
+      <div class="audio-actions">
+        <button class="audio-action-btn" id="test-audio">
+          <i class="fas fa-play"></i>
+          Test Sound
+        </button>
+        <button class="audio-action-btn" id="mute-all">
+          <i class="fas fa-volume-mute"></i>
+          Mute All
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
+  <script src="/js/enhanced-audio-manager.js"></script>
+  <script src="/js/audio-init.js"></script>
   <script src="/js/auth.js"></script>
+  <script src="/js/mobile-nav.js"></script>
 </body>
 </html>

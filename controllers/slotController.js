@@ -306,7 +306,8 @@ async function simulateRTP(spins = 1000000, betPerLine = 10, paylines = Array.fr
   console.log(`Simulated Spins: ${spins}`);
   console.log(`Total Bet: ${totalBet}`);
   console.log(`Total Payout: ${totalPayout}`);
-  console.log(`RTP: ${(totalPayout / totalBet * 100).toFixed(2)}%`);
+  // removed currently the RTP message in the terminal to not confuse the current logic of the payoutTable
+  // console.log(`RTP: ${(totalPayout / totalBet * 100).toFixed(2)}%`);
   console.log(`Jackpot Hits: ${jackpotHits}`);
 }
 

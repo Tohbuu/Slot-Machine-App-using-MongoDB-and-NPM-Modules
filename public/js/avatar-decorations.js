@@ -328,25 +328,39 @@ class AvatarDecorations {
 
   updateFrameDisplay() {
     const frameNameEl = document.querySelector('.frame-name-display');
+    const miniFrameSvg = document.querySelector('.mini-frame-svg');
     const currentFrame = this.getCurrentFrame();
-    
+
     if (frameNameEl) {
       frameNameEl.textContent = currentFrame ? this.formatFrameName(currentFrame) : 'No Frame';
+    }
+    if (miniFrameSvg) {
+      if (currentFrame) {
+        miniFrameSvg.src = `/images/frames/${currentFrame}.svg`;
+        miniFrameSvg.alt = this.formatFrameName(currentFrame) + ' Frame';
+        miniFrameSvg.style.display = '';
+      } else {
+        miniFrameSvg.style.display = 'none';
+      }
     }
   }
 
   updateBadgeDisplay() {
     const badgeNameEl = document.querySelector('.badge-name-display');
-    const miniBadgeIcon = document.querySelector('.mini-badge-icon');
+    const miniBadgeSvg = document.querySelector('.mini-badge-svg');
     const currentBadge = this.getCurrentBadge();
-    
+
     if (badgeNameEl) {
       badgeNameEl.textContent = currentBadge ? this.formatBadgeName(currentBadge) : 'No Badge';
     }
-    
-    if (miniBadgeIcon && currentBadge) {
-      miniBadgeIcon.innerHTML = `<i class="fas ${this.getBadgeIcon(currentBadge)}"></i>`;
-      miniBadgeIcon.style.background = this.getBadgeBackground(currentBadge);
+    if (miniBadgeSvg) {
+      if (currentBadge) {
+        miniBadgeSvg.src = `/images/badges/${currentBadge}.svg`;
+        miniBadgeSvg.alt = this.formatBadgeName(currentBadge) + ' Badge';
+        miniBadgeSvg.style.display = '';
+      } else {
+        miniBadgeSvg.style.display = 'none';
+      }
     }
   }
 
@@ -428,6 +442,26 @@ class AvatarDecorations {
     
     return milestones.find(milestone => milestone.level > this.userLevel) || 
            { level: 100, reward: 'Max Level Reached!' };
+  }
+
+  updateGlobalUserFrame() {
+    const frameSvg = document.querySelector('.user-frame-svg');
+    let frame = 'bronze_frame';
+    if (this.userLevel >= 100) frame = 'legendary_frame';
+    else if (this.userLevel >= 75) frame = 'gold_frame';
+    else if (this.userLevel >= 50) frame = 'silver_frame';
+    else if (this.userLevel >= 25) frame = 'bronze_frame';
+    else frame = null;
+
+    if (frameSvg) {
+      if (frame) {
+        frameSvg.src = `/images/frames/${frame}.svg`;
+        frameSvg.alt = frame.replace('_', ' ').replace('frame', 'Frame');
+        frameSvg.style.display = '';
+      } else {
+        frameSvg.style.display = 'none';
+      }
+    }
   }
 }
 

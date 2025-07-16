@@ -1,0 +1,625 @@
+/* Audio Controls Styling - Optimized */
+:root {
+  --audio-control-bg: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  --audio-control-border: 2px solid var(--neon-cyan);
+  --audio-control-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+  --audio-control-hover-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+  --audio-muted-color: var(--neon-pink);
+  --audio-muted-shadow: 0 0 20px rgba(255, 0, 128, 0.3);
+  --audio-muted-hover-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+  --audio-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Control Panel */
+.audio-control-panel {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  font-family: 'Orbitron', monospace;
+}
+
+/* Toggle Button */
+.audio-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--audio-control-bg);
+  border: var(--audio-control-border);
+  border-radius: 25px;
+  padding: 8px 16px;
+  color: var(--neon-cyan);
+  cursor: pointer;
+  transition: var(--audio-transition);
+  box-shadow: 
+    var(--audio-control-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  position: relative;
+  overflow: visible;
+}
+
+.audio-toggle-btn:hover {
+  background: linear-gradient(135deg, #16213e 0%, #1a1a2e 100%);
+  border-color: #ffffff;
+  color: #ffffff;
+  box-shadow: 
+    var(--audio-control-hover-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.audio-toggle-btn.muted {
+  border-color: var(--audio-muted-color);
+  color: var(--audio-muted-color);
+  box-shadow: 
+    var(--audio-muted-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.audio-toggle-btn.muted:hover {
+  border-color: #ff6666;
+  color: #ff6666;
+  box-shadow: 
+    var(--audio-muted-hover-shadow),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Audio Waves Animation */
+.audio-icon-container,
+.audio-waves {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.audio-icon-container {
+  width: 24px;
+  height: 24px;
+}
+
+.audio-waves {
+  flex-direction: column;
+  gap: 2px;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.wave {
+  width: 3px;
+  background: currentColor;
+  border-radius: 2px;
+  animation: audioWave 1.5s ease-in-out infinite;
+}
+
+.wave-1 { height: 4px; animation-delay: 0s; }
+.wave-2 { height: 8px; animation-delay: 0.2s; }
+.wave-3 { height: 6px; animation-delay: 0.4s; }
+
+.audio-toggle-btn.muted .wave {
+  animation-play-state: paused;
+  opacity: 0.3;
+}
+
+@keyframes audioWave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.7; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* Dropdown Menu */
+.audio-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  background: var(--audio-control-bg);
+  border: var(--audio-control-border);
+  border-radius: 15px;
+  padding: 20px;
+  min-width: 280px;
+  max-width: 320px;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.8),
+    var(--audio-control-shadow);
+  backdrop-filter: blur(15px);
+  z-index: 10000;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-20px) scale(0.95);
+  transition: var(--audio-transition);
+  pointer-events: none;
+}
+
+.audio-dropdown.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.audio-dropdown::before,
+.audio-dropdown::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  z-index: 1;
+}
+
+.audio-dropdown::before {
+  border-bottom: 10px solid var(--neon-cyan);
+}
+
+.audio-dropdown::after {
+  top: -8px;
+  right: 21px;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 9px solid #1a1a2e;
+  z-index: 2;
+}
+
+/* Sections and Controls */
+.audio-section {
+  margin-bottom: 20px;
+}
+
+.audio-section:last-child {
+  margin-bottom: 0;
+}
+
+.audio-label {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.audio-label > span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.audio-label i {
+  width: 16px;
+  color: var(--neon-cyan);
+}
+
+/* Volume Controls */
+.volume-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 255, 255, 0.3);
+}
+
+.volume-slider {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.volume-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: var(--audio-control-shadow);
+  transition: var(--audio-transition);
+}
+
+.volume-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  box-shadow: var(--audio-control-hover-shadow);
+}
+
+.volume-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: var(--neon-cyan);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  box-shadow: var(--audio-control-shadow);
+}
+
+.volume-value {
+  font-size: 12px;
+  color: var(--neon-cyan);
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Action Buttons */
+.audio-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid rgba(0, 255, 255, 0.2);
+}
+
+.audio-action-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid var(--neon-cyan);
+  color: var(--neon-cyan);
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  transition: var(--audio-transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.audio-action-btn:hover {
+  background: var(--neon-cyan);
+  color: #1a1a2e;
+  box-shadow: var(--audio-control-shadow);
+  transform: translateY(-1px);
+}
+
+.audio-action-btn:active {
+  transform: scale(0.95);
+}
+
+/* Status Text */
+.audio-status-text {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* Accessibility */
+.audio-toggle-btn:focus-visible,
+.volume-slider:focus-visible,
+.audio-action-btn:focus-visible {
+  outline: 2px solid var(--neon-cyan);
+  outline-offset: 2px;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .audio-control-panel {
+    top: 10px;
+    right: 10px;
+  }
+  
+  .audio-toggle-btn {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+  
+  .audio-icon-container {
+    width: 20px;
+    height: 20px;
+  }
+  
+  .audio-dropdown {
+    min-width: 260px;
+    padding: 15px;
+    right: -10px;
+  }
+  
+  .audio-actions {
+    flex-direction: column;
+  }
+  
+  .audio-action-btn {
+    padding: 12px;
+  }
+}
+
+/* Ensure old styles don't conflict */
+.audio-controls,
+.audio-toggle {
+  display: none !important;
+}
+
+/* Continue from existing CSS - Add these Spotify-specific styles */
+
+/* Spotify Section Styles */
+.spotify-login-section {
+  text-align: center;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.spotify-login-btn {
+  background: linear-gradient(135deg, #1db954, #1ed760);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 auto;
+  box-shadow: 0 4px 15px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-login-btn:hover {
+  background: linear-gradient(135deg, #1ed760, #1db954);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(29, 185, 84, 0.4);
+}
+
+.spotify-info {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.spotify-controls-section {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 1rem;
+}
+
+.spotify-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.spotify-header i {
+  color: #1db954;
+  font-size: 1.2rem;
+}
+
+.spotify-header span {
+  font-weight: bold;
+  color: #fff;
+}
+
+.spotify-toggle-btn {
+  background: rgba(29, 185, 84, 0.2);
+  color: #1db954;
+  border: 1px solid #1db954;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.spotify-toggle-btn:hover {
+  background: rgba(29, 185, 84, 0.3);
+}
+
+.spotify-toggle-btn.active {
+  background: #1db954;
+  color: white;
+}
+
+.spotify-track-info {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.spotify-player-info {
+  background: rgba(29, 185, 84, 0.1);
+  border: 1px solid rgba(29, 185, 84, 0.3);
+  border-radius: 8px;
+  padding: 0.75rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.track-name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #1db954;
+  margin-bottom: 0.25rem;
+}
+
+.track-artist {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.spotify-controls-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.spotify-control-btn {
+  background: rgba(29, 185, 84, 0.2);
+  border: 1px solid rgba(29, 185, 84, 0.4);
+  color: #1db954;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.spotify-control-btn:hover {
+  background: rgba(29, 185, 84, 0.3);
+  transform: scale(1.05);
+}
+
+.spotify-control-btn:active {
+  transform: scale(0.95);
+}
+
+.spotify-toggle-section {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#spotify-toggle.active {
+  background: rgba(29, 185, 84, 0.3);
+  border-color: #1db954;
+  color: #1db954;
+}
+
+#spotify-login-btn {
+  background: rgba(29, 185, 84, 0.2);
+  border: 1px solid rgba(29, 185, 84, 0.4);
+  color: #1db954;
+}
+
+#spotify-login-btn:hover {
+  background: rgba(29, 185, 84, 0.3);
+}
+
+.spotify-control-btn i {
+  font-size: 0.9rem;
+}
+
+.spotify-volume-control {
+  margin-top: 1rem;
+}
+
+.spotify-volume-control .audio-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.spotify-volume-control .audio-label span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #1db954;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design for Spotify Controls */
+@media (max-width: 768px) {
+  .spotify-header {
+    flex-direction: column;
+    gap: 0.5rem;
+    text-align: center;
+  }
+  
+  .spotify-player-controls {
+    gap: 0.5rem;
+  }
+  
+  .spotify-control-btn {
+    width: 35px;
+    height: 35px;
+    padding: 0.5rem;
+  }
+  
+  .spotify-control-btn i {
+    font-size: 0.8rem;
+  }
+  
+  .spotify-login-btn {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for Spotify connection status */
+@keyframes spotify-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.spotify-connecting {
+  animation: spotify-pulse 1.5s infinite;
+}
+
+/* Spotify track info animations */
+.track-info-update {
+  animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Spotify volume slider customization */
+.spotify-volume-control .volume-slider {
+  background: linear-gradient(to right, #1db954 0%, #1db954 50%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.3) 100%);
+}
+
+.spotify-volume-control .volume-slider::-webkit-slider-thumb {
+  background: #1db954;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(29, 185, 84, 0.3);
+}
+
+.spotify-volume-control .volume-slider::-moz-range-thumb {
+  background: #1db954;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 6px rgba(29, 185, 84, 0.3);
+}
+
+/* Spotify status indicators */
+.spotify-status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-left: 0.5rem;
+}
+
+.spotify-status-indicator.connected {
+  background: #1db954;
+  box-shadow: 0 0 6px rgba(29, 185, 84, 0.6);
+}
+
+.spotify-status-indicator.disconnected {
+  background: #ff4444;
+  box-shadow: 0 0 6px rgba(255, 68, 68, 0.6);
+}
+
+.spotify-status-indicator.connecting {
+  background: #ffaa00;
+  animation: spotify-pulse 1s infinite;
+}

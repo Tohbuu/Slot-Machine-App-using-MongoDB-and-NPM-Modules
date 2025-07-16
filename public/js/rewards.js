@@ -692,9 +692,8 @@ class RewardManager {
             <div class="frame-showcase">
               ${frameUnlocks.map(frame => `
                 <div class="frame-demo ${frame} ${this.getFrameRarity(frame)}">
-                  <div class="demo-avatar-container">
-                    <img src="/images/avatars/default.png" alt="Avatar" class="demo-avatar">
-                    <div class="frame-border ${frame}"></div>
+                  <div class="demo-avatar-container" style="position:relative;">
+                    <img src="/images/frames/${frame}.svg" alt="${this.formatUnlockName(frame)} Frame" class="frame-svg" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none;">
                     <div class="frame-glow ${this.getFrameRarity(frame)}"></div>
                   </div>
                   <span class="frame-name">${this.formatUnlockName(frame)}</span>
@@ -704,7 +703,6 @@ class RewardManager {
             </div>
           </div>
         ` : ''}
-        
         ${badgeUnlocks.length > 0 ? `
           <div class="badge-preview-section">
             <div class="preview-title"><i class="fas fa-shield-alt"></i> Badge Preview:</div>

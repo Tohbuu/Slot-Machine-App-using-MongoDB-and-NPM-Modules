@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asset Test - Neon Spin</title>
+  
+  <!-- Favicon Links -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
+  <style>
+    body {
+      background: #000;
+      color: #00ffff;
+      font-family: 'Orbitron', monospace;
+      padding: 20px;
+    }
+    
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      border: 1px solid #00ffff;
+      border-radius: 10px;
+    }
+    
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 20px;
+      margin: 20px 0;
+    }
+    
+    .asset-item {
+      text-align: center;
+      padding: 10px;
+      border: 1px solid #333;
+      border-radius: 5px;
+    }
+    
+    .asset-item img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      filter: drop-shadow(0 0 10px rgba(0, 255, 255, 0.5));
+    }
+    
+    .asset-item.frame img {
+      width: 80px;
+      height: 80px;
+    }
+    
+    .status {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+    
+    .status.success {
+      background: #00ff00;
+      color: #000;
+    }
+    
+    .status.error {
+      background: #ff0000;
+      color: #fff;
+    }
+    
+    .audio-test {
+      margin: 10px 0;
+    }
+    
+    .audio-test button {
+      background: #00ffff;
+      color: #000;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    
+    .audio-test button:hover {
+      background: #ffffff;
+      transform: scale(1.05);
+    }
+    
+    .summary {
+      background: #111;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+    
+    .summary h3 {
+      color: #00ffff;
+      margin-top: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎰 Neon Spin - Asset Integration Test</h1>
+  
+  <div class="test-section">
+    <h2>🎯 Slot Machine Symbols</h2>
+    <div class="asset-grid" id="symbols-grid">
+      <!-- Symbols will be loaded here -->
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h2>🖼️ Avatar Frames</h2>
+    <div class="asset-grid" id="frames-grid">
+      <!-- Frames will be loaded here -->
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h2>🏆 Badges</h2>
+    <div class="asset-grid" id="badges-grid">
+      <!-- Badges will be loaded here -->
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h2>🔊 Audio System Test</h2>
+    <div class="audio-test">
+      <button onclick="testAudio('button-click')">Button Click</button>
+      <button onclick="testAudio('win-small')">Small Win</button>
+      <button onclick="testAudio('jackpot')">Jackpot</button>
+      <button onclick="testAudio('spin')">Spin Sound</button>
+    </div>
+    <div id="audio-status"></div>
+  </div>
+  
+  <div class="test-section">
+    <h2>🌐 Favicon Test</h2>
+    <p>Check your browser tab for the favicon. It should display the Neon Spin icon.</p>
+  </div>
+  
+  <div class="summary" id="test-summary">
+    <h3>📊 Test Results Summary</h3>
+    <div id="summary-content">
+      <!-- Summary will be populated by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Test symbols
+    const symbols = [
+      'cherry', 'lemon', 'orange', 'plum', 
+      'bell', 'bar', 'seven', 'diamond'
+    ];
+    
+    const frames = [
+      'bronze', 'silver', 'gold', 'platinum', 'diamond'
+    ];
+    
+    const badges = [
+      'winner', 'jackpot', 'streak', 'high-roller'
+    ];
+    
+    let testResults = {
+      symbols: { loaded: 0, total: symbols.length },
+      frames: { loaded: 0, total: frames.length },
+      badges: { loaded: 0, total: badges.length },
+      audio: { working: false }
+    };
+    
+    function loadAssets(assets, container, path, type = '') {
+      const grid = document.getElementById(container);
+      
+      assets.forEach(asset => {
+        const item = document.createElement('div');
+        item.className = `asset-item ${type}`;
+        
+        const img = document.createElement('img');
+        img.src = `${path}${asset}.svg`;
+        img.alt = asset;
+        
+        img.onerror = () => {
+          item.innerHTML = `<div style="color: #ff0000;">${asset}<br>❌ Missing</div>`;
+          updateSummary();
+        };
+        
+        img.onload = () => {
+          const status = document.createElement('span');
+          status.className = 'status success';
+          status.textContent = '✅ Loaded';
+          
+          const label = document.createElement('div');
+          label.textContent = asset;
+          label.style.marginTop = '5px';
+          label.style.fontSize = '12px';
+          
+          item.appendChild(img);
+          item.appendChild(label);
+          item.appendChild(status);
+          
+          // Update test results
+          if (type === 'frame') {
+            testResults.frames.loaded++;
+          } else if (container === 'badges-grid') {
+            testResults.badges.loaded++;
+          } else {
+            testResults.symbols.loaded++;
+          }
+          
+          updateSummary();
+        };
+        
+        grid.appendChild(item);
+      });
+    }
+    
+    function testAudio(soundName) {
+      const statusDiv = document.getElementById('audio-status');
+      statusDiv.innerHTML = `<p>🔊 Testing ${soundName}...</p>`;
+      
+      // Try to play the sound
+      const audio = new Audio(`/sounds/${soundName}.mp3`);
+      
+      audio.oncanplaythrough = () => {
+        statusDiv.innerHTML += `<p style="color: #00ff00;">✅ ${soundName}.mp3 loaded successfully</p>`;
+        testResults.audio.working = true;
+        updateSummary();
+      };
+      
+      audio.onerror = () => {
+        statusDiv.innerHTML += `<p style="color: #ff0000;">❌ ${soundName}.mp3 failed to load</p>`;
+        updateSummary();
+      };
+      
+      audio.play().catch(err => {
+        statusDiv.innerHTML += `<p style="color: #ffaa00;">⚠️ ${soundName}.mp3 loaded but couldn't play (user interaction required)</p>`;
+        testResults.audio.working = true;
+        updateSummary();
+      });
+    }
+    
+    function updateSummary() {
+      const summaryContent = document.getElementById('summary-content');
+      
+      const symbolsPercent = Math.round((testResults.symbols.loaded / testResults.symbols.total) * 100);
+      const framesPercent = Math.round((testResults.frames.loaded / testResults.frames.total) * 100);
+      const badgesPercent = Math.round((testResults.badges.loaded / testResults.badges.total) * 100);
+      
+      const overallPercent = Math.round(
+        ((testResults.symbols.loaded + testResults.frames.loaded + testResults.badges.loaded) / 
+         (testResults.symbols.total + testResults.frames.total + testResults.badges.total)) * 100
+      );
+      
+      summaryContent.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+          <div>
+            <strong>🎯 Symbols:</strong><br>
+            ${testResults.symbols.loaded}/${testResults.symbols.total} (${symbolsPercent}%)
+            <div style="background: #333; height: 10px; border-radius: 5px; margin-top: 5px;">
+              <div style="background: ${symbolsPercent >= 80 ? '#00ff00' : symbolsPercent >= 60 ? '#ffaa00' : '#ff0000'}; height: 100%; width: ${symbolsPercent}%; border-radius: 5px;"></div>
+            </div>
+          </div>
+          
+          <div>
+            <strong>🖼️ Frames:</strong><br>
+            ${testResults.frames.loaded}/${testResults.frames.total} (${framesPercent}%)
+            <div style="background: #333; height: 10px; border-radius: 5px; margin-top: 5px;">
+              <div style="background: ${framesPercent >= 80 ? '#00ff00' : framesPercent >= 60 ? '#ffaa00' : '#ff0000'}; height: 100%; width: ${framesPercent}%; border-radius: 5px;"></div>
+            </div>
+          </div>
+          
+          <div>
+            <strong>🏆 Badges:</strong><br>
+            ${testResults.badges.loaded}/${testResults.badges.total} (${badgesPercent}%)
+            <div style="background: #333; height: 10px; border-radius: 5px; margin-top: 5px;">
+              <div style="background: ${badgesPercent >= 80 ? '#00ff00' : badgesPercent >= 60 ? '#ffaa00' : '#ff0000'}; height: 100%; width: ${badgesPercent}%; border-radius: 5px;"></div>
+            </div>
+          </div>
+          
+          <div>
+            <strong>🔊 Audio:</strong><br>
+            ${testResults.audio.working ? '✅ Working' : '❌ Not tested'}
+          </div>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: ${overallPercent >= 80 ? '#004400' : overallPercent >= 60 ? '#444400' : '#440000'}; border-radius: 5px;">
+          <strong>Overall Status: ${overallPercent}%</strong><br>
+          ${overallPercent >= 80 ? '✅ Excellent! Your assets are ready.' : 
+            overallPercent >= 60 ? '⚠️ Good, but some assets are missing.' : 
+            '❌ Critical: Many assets are missing.'}
+        </div>
+        
+        <div style="margin-top: 15px; font-size: 12px; color: #888;">
+          <strong>Next Steps:</strong><br>
+          ${overallPercent < 100 ? '• Add missing asset files to their respective directories<br>' : ''}
+          ${!testResults.audio.working ? '• Add sound files to public/sounds/ directory<br>' : ''}
+          • Test the main application: <code>npm start</code><br>
+          • Check favicon in browser tab<br>
+          • Verify slot machine displays symbols correctly
+        </div>
+      `;
+    }
+    
+    // Initialize tests
+    document.addEventListener('DOMContentLoaded', () => {
+      loadAssets(symbols, 'symbols-grid', '/images/symbols/');
+      loadAssets(frames, 'frames-grid', '/images/frames/', 'frame');
+      loadAssets(badges, 'badges-grid', '/images/badges/');
+      
+      // Initial summary
+      updateSummary();
+      
+      // Test favicon
+      const favicon = document.querySelector('link[rel="icon"]');
+      if (favicon) {
+        const testImg = new Image();
+        testImg.onload = () => {
+          console.log('✅ Favicon loaded successfully');
+        };
+        testImg.onerror = () => {
+          console.log('❌ Favicon failed to load');
+        };
+        testImg.src = favicon.href;
+      }
+    });
+  </script>
+</body>
+</html>

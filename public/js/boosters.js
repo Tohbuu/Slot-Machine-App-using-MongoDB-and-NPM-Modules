@@ -15,6 +15,7 @@ class BoosterManager {
   }
 
   setupEventListeners() {
+    if (!this.packsContainer) return;
     this.packsContainer.addEventListener('click', (e) => {
       if (e.target.classList.contains('purchase-btn')) {
         e.preventDefault(); // Prevent default button behavior
@@ -110,29 +111,39 @@ class BoosterManager {
         },
         body: JSON.stringify({ packId })
       });
-    
+
       const result = await response.json();
-    
+
       if (result.success) {
         alert('Booster purchased successfully!');
         this.currentBankBalance = result.newBankBalance;
         this.updateBankBalance();
         await this.loadBoosters();
         await this.loadActiveBoosters();
+
+        // Find the booster info from the last loaded boosters
+        const booster = (this.packsContainer && Array.from(this.packsContainer.children)
+          .map(card => card.dataset.id === packId ? card : null)
+          .filter(Boolean)[0]) || {};
+
         document.dispatchEvent(new CustomEvent('boosterPurchased', {
           detail: {
-            boosterName: booster.name,
-            price: booster.price,
-            type: booster.type
+            boosterName: booster.name || '',
+            price: booster.price || '',
+            type: booster.type || ''
           }
         }));
-        // Add this after successful purchase
+
         if (window.ActivityTracker) {
-          window.ActivityTracker.track('booster_purchase', `Purchased ${boosterName} for ${price} credits`, {
-            boosterName: boosterName,
-            price: price,
-            type: boosterType
-          });
+          window.ActivityTracker.track(
+            'booster_purchase',
+            `Purchased ${booster.name || ''} for ${booster.price || ''} credits`,
+            {
+              boosterName: booster.name || '',
+              price: booster.price || '',
+              type: booster.type || ''
+            }
+          );
         }
       } else {
         alert(result.error || 'Purchase failed');

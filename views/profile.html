@@ -4,7 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile - Neon Spin</title>
+  
+  <!-- Favicon Links -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+  
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/components/audio-controls.css">
   <link rel="stylesheet" href="/css/mobile.css">
   <link rel="stylesheet" href="/css/global-avatar-decorations.css">
   <!-- added themes.css for checking -->
@@ -13,9 +22,125 @@
   <link rel="stylesheet" href="/css/components/activity.css">
   <link rel="stylesheet" href="/css/components/profile.css">
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/global-avatar-decorations.css">
   <script type="module" src="/js/theme.js"></script>
+  <link rel="stylesheet" href="/css/themes.css">
 </head>
 <body>
+  <!-- Replace the existing audio toggle button with this enhanced version -->
+<!-- Enhanced Audio Control Panel -->
+<div class="audio-control-panel" id="audio-control-panel">
+  <button class="audio-toggle-btn" id="audio-toggle-btn" title="Audio Controls - Click to expand">
+    <div class="audio-icon-container">
+      <i class="fas fa-volume-up" id="audio-icon"></i>
+      <div class="audio-waves">
+        <span class="wave wave-1"></span>
+        <span class="wave wave-2"></span>
+        <span class="wave wave-3"></span>
+      </div>
+    </div>
+    <span class="audio-status-text" id="audio-status-text">ON</span>
+  </button>
+  
+  <div class="audio-dropdown" id="audio-dropdown">
+    <div class="audio-section">
+      <label class="audio-label">
+        <span>
+          <i class="fas fa-music"></i>
+          Background Music
+        </span>
+        <div class="volume-control">
+          <input type="range" class="volume-slider" id="music-volume" min="0" max="100" value="50">
+          <span class="volume-value" id="music-value">50%</span>
+        </div>
+      </label>
+    </div>
+    
+    <div class="audio-section">
+      <label class="audio-label">
+        <span>
+          <i class="fas fa-bell"></i>
+          Sound Effects
+        </span>
+        <div class="volume-control">
+          <input type="range" class="volume-slider" id="sfx-volume" min="0" max="100" value="70">
+          <span class="volume-value" id="sfx-value">70%</span>
+        </div>
+      </label>
+    </div>
+    
+    <div class="audio-section" id="spotify-section">
+      <div id="spotify-login" style="display: block;">
+        <button class="audio-action-btn" id="spotify-login-btn">
+          <i class="fab fa-spotify"></i>
+          Coming Soon Feature = 
+          Connect Spotify
+        </button>
+        <p style="font-size: 0.8rem; opacity: 0.7; margin-top: 0.5rem;">
+          beta build - Premium account required for playback(not yet integrated fully)
+          <!-- Premium account required for playback -->
+        </p>
+      </div>
+      
+      <div id="spotify-controls" style="display: none;">
+        <div class="spotify-player-info">
+          <div id="spotify-track-info">
+            <div class="track-name">No track playing</div>
+            <div class="track-artist">Connect to Spotify</div>
+          </div>
+        </div>
+        
+        <div class="spotify-controls-row">
+          <button class="spotify-control-btn" id="spotify-prev" title="Previous Track">
+            <i class="fas fa-step-backward"></i>
+          </button>
+          <button class="spotify-control-btn" id="spotify-play" title="Play">
+            <i class="fas fa-play"></i>
+          </button>
+          <button class="spotify-control-btn" id="spotify-pause" title="Pause" style="display: none;">
+            <i class="fas fa-pause"></i>
+          </button>
+          <button class="spotify-control-btn" id="spotify-next" title="Next Track">
+            <i class="fas fa-step-forward"></i>
+          </button>
+        </div>
+        
+        <div class="audio-section">
+          <label class="audio-label">
+            <span>
+              <i class="fab fa-spotify"></i>
+              Spotify Volume
+            </span>
+            <div class="volume-control">
+              <input type="range" class="volume-slider" id="spotify-volume" min="0" max="100" value="50">
+              <span class="volume-value" id="spotify-volume-value">50%</span>
+            </div>
+          </label>
+        </div>
+        
+        <div class="spotify-toggle-section">
+          <button class="audio-action-btn" id="spotify-toggle">
+            <i class="fab fa-spotify"></i>
+            Use for Background Music
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="audio-actions">
+      <button class="audio-action-btn" id="test-audio">
+        <i class="fas fa-play"></i>
+        Test Sound
+      </button>
+      <button class="audio-action-btn" id="mute-all">
+        <i class="fas fa-volume-mute"></i>
+        Mute All
+      </button>
+    </div>
+  </div>
+</div>
+
+  
   <div class="container">
     <header>
       <div class="logo">NEON SPIN</div>
@@ -45,6 +170,8 @@
               <div class="dropdown-avatar-container">
                 <div class="avatar-container">
                   <img src="/images/avatars/default.png" class="dropdown-avatar" alt="Avatar">
+                  <!-- Frame SVG overlay, always present -->
+      <img src="/images/frames/bronze_frame.svg" class="user-frame-svg" alt="Frame" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none;">
                 </div>
               </div>
               <div class="dropdown-user-info">
@@ -75,8 +202,9 @@
               <div class="section-title">Current Frame</div>
               <div class="current-frame-display">
                 <div class="frame-preview-mini">
-                  <div class="mini-avatar-container">
-                    <img src="/images/avatars/default.png" class="mini-avatar" alt="Avatar">
+                  <div class="mini-avatar-container" style="position:relative;">
+                    <!-- Frame SVG overlay, initially hidden or default -->
+                    <img src="/images/frames/bronze_frame.svg" class="mini-frame-svg" alt="Frame" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:2; pointer-events:none; display:none;">
                   </div>
                   <span class="frame-name-display">No Frame</span>
                 </div>
@@ -88,7 +216,8 @@
               <div class="current-badge-display">
                 <div class="badge-preview-mini">
                   <div class="mini-badge-icon">
-                    <i class="fas fa-shield-alt"></i>
+                    <!-- Badge SVG/icon will be set by JS -->
+                    <img src="/images/badges/bronze_badge.svg" class="mini-badge-svg" alt="Badge" style="width:22px; height:22px; display:none;">
                   </div>
                   <span class="badge-name-display">No Badge</span>
                 </div>
@@ -331,13 +460,12 @@
   </div>
   
   <script src="https://kit.fontawesome.com/2b8e1e2c2a.js" crossorigin="anonymous"></script>
+  <script src="/js/enhanced-audio-manager.js"></script>
+  <script src="/js/audio-init.js"></script>
+  <script src="/js/profile-audio-init.js"></script>
+  <script src="/js/global-audio-controller.js"></script>
   <script src="/js/profile.js"></script>
   <script src="/js/avatar-decorations.js"></script>
-  <script src="/js/reward-notification.js"></script>
   <script src="/js/mobile-nav.js"></script>
-  <!-- <script src="/js/profile-enhanced.js"></script> -->
-
-  <!-- activity logic here -->
-   <!-- <script src="/js/activity-tracker.js"></script> -->
 </body>
 </html>

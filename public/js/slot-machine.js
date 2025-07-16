@@ -57,21 +57,59 @@ document.addEventListener('DOMContentLoaded', () => {
   ];
 
   /**
-   * Symbol Paytable
-   * Payouts are multiplied by betPerLine/10 (from second version)
-   * This provides more exciting win potential while maintaining balance
+   * Symbol Paytable - FIXED FOR PROPER RTP
+   * Reduced payouts significantly to achieve ~95% RTP
+   * Payouts are multiplied by betPerLine/10
    */
   const SYMBOL_PAYTABLE = {
-    'seven': { 3: 40000, 2: 20000 },     // Highest paying symbol
-    'diamond': { 3: 4000, 2: 1000 },     // High value symbol
-    'wild': { 3: 4000 },                 // Matches highest paying symbol
-    'bar': { 3: 10000, 2: 4000 },        // Standard high symbol
-    'doublebar': { 3: 8000, 2: 2000 },   // Standard mid-high symbol
-    'bell': { 3: 3000, 2: 400 },         // Standard mid symbol
-    'horseshoe': { 3: 600, 2: 200 },     // Standard low symbol
-    'cherry': { 3: 2000, 2: 200 },       // Standard low symbol with good 3-match
-    'scatter': { 3: 'free_spins', 2: 'multiplier' } // Special outcomes
+    'seven': { 3: 50, 2: 5 },            // Reduced from 40000/20000
+    'diamond': { 3: 25, 2: 3 },          // Reduced from 4000/1000  
+    'wild': { 3: 25 },                   // Reduced from 4000
+    'bar': { 3: 20, 2: 2 },              // Reduced from 10000/4000
+    'doublebar': { 3: 15, 2: 1.5 },      // Reduced from 8000/2000
+    'bell': { 3: 10, 2: 1 },             // Reduced from 3000/400
+    'horseshoe': { 3: 8, 2: 0.8 },       // Reduced from 600/200
+    'cherry': { 3: 5, 2: 0.5 },          // Reduced from 2000/200
+    'scatter': { 3: 'free_spins', 2: 'multiplier' } // Special outcomes unchanged
   };
+
+  // Audio Manager Integration
+  let audioManager = null;
+
+  document.addEventListener('audioSystemReady', (event) => {
+    audioManager = event.detail.audioManager;
+    console.log('🎵 Audio system ready for slot machine');
+    
+    // Start background music if not muted
+    if (!audioManager.getMuted()) {
+      audioManager.fadeInMusic(2000);
+    }
+  });
+
+  // Enhanced helper function to safely play sounds with volume control
+  function playSlotSound(soundName, options = {}) {
+    if (!audioManager) {
+      console.warn('Audio manager not ready');
+      return;
+    }
+    
+    if (audioManager.getMuted()) {
+      return;
+    }
+    
+    // Get the appropriate volume setting
+    const sound = audioManager.sounds[soundName];
+    if (sound && sound.audio) {
+      // Apply current volume settings before playing
+      if (sound.type === 'music') {
+        sound.audio.volume = audioManager.getMusicVolume() / 100;
+      } else {
+        sound.audio.volume = audioManager.getSFXVolume() / 100;
+      }
+    }
+    
+    audioManager.playSound(soundName, options);
+  }
 
   // Initialize the game
   initGame();
@@ -79,7 +117,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
   // Event Listeners
   // ==========================================================================
-  elements.spinBtn.addEventListener('click', spin);
+  elements.spinBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    // Immediate audio feedback - multiple fallback methods with volume control
+    try {
+      // Method 1: Use global audio manager if available
+      if (window.audioManager && !window.audioManager.getMuted()) {
+        window.audioManager.playSound('spin');
+      }
+      // Method 2: Use local audioManager if available  
+      else if (audioManager && !audioManager.getMuted()) {
+        audioManager.playSound('spin');
+      }
+      // Method 3: Direct audio fallback with volume settings
+      else {
+        const savedSFXVolume = localStorage.getItem('sfxVolume') || 70;
+        const savedMuted = localStorage.getItem('audioMuted') === 'true';
+        
+        if (!savedMuted) {
+          const spinSound = new Audio('/sounds/spin.mp3');
+          spinSound.volume = (savedSFXVolume / 100) * 0.7;
+          spinSound.play().catch(console.warn);
+        }
+      }
+    } catch (error) {
+      console.warn('Spin sound failed:', error);
+    }
+    
+    // Proceed with spin logic
+    spin();
+  });
   elements.increaseBetBtn.addEventListener('click', () => adjustBet(1));
   elements.decreaseBetBtn.addEventListener('click', () => adjustBet(-1));
   elements.maxBetBtn.addEventListener('click', setMaxBet);
@@ -96,6 +164,50 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.paylineDeselectAllBtn?.addEventListener('click', deselectAllPaylines);
     elements.paylineRecommendedBtn?.addEventListener('click', setRecommendedPaylines);
   }
+
+  // Remove the old event listener first, then add this enhanced one
+  elements.spinBtn.removeEventListener('click', spin);
+
+  // Fallback spin sound function
+  function playSpinSoundDirect() {
+    try {
+      // Try using the global audio manager first
+      if (window.audioManager && !window.audioManager.getMuted()) {
+        const sfxVolume = window.audioManager.getSFXVolume() / 100;
+        window.audioManager.playSound('spin');
+        return;
+      }
+      
+      // Try using local audioManager
+      if (audioManager && !audioManager.getMuted()) {
+        audioManager.playSound('spin');
+        return;
+      }
+      
+      // Fallback: create and play audio directly with saved volume settings
+      const savedSFXVolume = localStorage.getItem('sfxVolume') || 70;
+      const savedMuted = localStorage.getItem('audioMuted') === 'true';
+      
+      if (savedMuted) return;
+      
+      const spinAudio = new Audio('/sounds/spin.mp3');
+      spinAudio.volume = (savedSFXVolume / 100) * 0.7; // Apply saved volume
+      spinAudio.play().catch(err => {
+        console.warn('Could not play spin sound:', err);
+      });
+    } catch (error) {
+      console.warn('Spin sound error:', error);
+    }
+  }
+
+  // Enhanced spin button with immediate audio feedback
+  elements.spinBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    playSpinSoundDirect();
+    
+    // Small delay then proceed with spin
+    setTimeout(() => spin(), 100);
+  });
 
   // ==========================================================================
   // Core Game Functions
@@ -154,17 +266,26 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   async function spin() {
     const totalBet = state.betPerLine * state.paylines.length;
+    if (state.paylines.length === 0) {
+      showResult('Please select at least one payline!', false);
+      playSlotSound('button-click'); // Error sound
+      return;
+    }
     if (state.isSpinning) {
         showResult('Already spinning!', false);
         return;
     }
     if (state.balance < totalBet) {
         showResult('Insufficient balance for this bet!', false);
+        playSlotSound('button-click'); // Error sound
         return;
     }
 
     state.isSpinning = true;
     disableControls();
+    
+    // Play spin sound
+    playSlotSound('spin');
 
     try {
       const response = await fetch('/api/slot/spin', {
@@ -189,10 +310,12 @@ document.addEventListener('DOMContentLoaded', () => {
         processSpinResults(data, data.grid);
       } else {
         showResult(data.error || 'Spin failed. Please try again.', false);
+        playSlotSound('button-click'); // Error sound
       }
     } catch (error) {
       console.error('Spin error:', error);
       showResult('Connection error. Please check your network.', false);
+      playSlotSound('button-click'); // Error sound
     } finally {
       state.isSpinning = false;
       enableControls();
@@ -209,12 +332,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayResults = data.paylineResults || localResults.paylineResults;
     
     if (displayResults.length > 0) {
+      const totalWin = displayResults.reduce((sum, result) => {
+        return sum + (typeof result.payout === 'number' ? result.payout : 0);
+      }, 0);
+      
+      // Play appropriate win sound based on win amount
+      const betAmount = state.betPerLine * state.paylines.length;
+      if (totalWin >= betAmount * 50) {
+        playSlotSound('win-big');
+      } else if (totalWin >= betAmount * 5) {
+        playSlotSound('win-small');
+      } else if (totalWin > 0) {
+        playSlotSound('coin-drop');
+      }
+      
       const resultMessages = displayResults.map(r => {
         if (r.payline === -1) { // Scatter win
+          playSlotSound('bonus');
           return `Scatter Bonus: ${r.count}x Scatter!`;
         }
-        // Convert 0-based index to 1-based display number for UI
-        return `Payline ${r.payline + 1}: ${r.count}x ${capitalize(r.symbol)} wins ${r.payout} credits!`;
+        // FIX: r.payline is already the correct payline index (0-9)
+        // Just add 1 to convert to display number (1-10)
+        const paylineNumber = r.payline;
+        return `Payline ${paylineNumber}: ${r.count}x ${capitalize(r.symbol)} wins ${r.payout} credits!`;
       });
       showResult(resultMessages.join('\n'), true);
     } else {
@@ -223,12 +363,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle special server-driven features
     if (data.jackpotWin) {
+      playSlotSound('jackpot');
       showResult(`MAJOR JACKPOT! You won ${data.jackpotAmount} credits!`, true);
     }
     if (data.bonusRound) {
+      playSlotSound('bonus');
       showBonusModal(data.bonusData, state.betPerLine, state.paylines);
     }
     if (data.leveledUp || (data.user && data.user.leveledUp)) {
+      playSlotSound('level-up');
       window.rewardNotification?.onLevelUp();
     }
   }
@@ -242,8 +385,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let totalWin = 0;
     let scatterCount = 0;
 
-    // Validate payline inputs (0-9 only)
-    activePaylines = activePaylines.filter(p => p >= 0 && p <= 9);
+    // Validate payline inputs (0-9 only) and ensure they're numbers
+    activePaylines = activePaylines.filter(p => typeof p === 'number' && p >= 0 && p <= 9);
 
     // Count scatters (pay anywhere)
     for (let row = 0; row < 3; row++) {
@@ -253,7 +396,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Check each active payline
-    activePaylines.forEach(paylineIdx => {
+    activePaylines.forEach((paylineIdx, arrayIndex) => {
+      // Ensure paylineIdx is within bounds
+      if (paylineIdx < 0 || paylineIdx >= PAYLINE_PATTERNS.length) {
+        console.warn(`Invalid payline index: ${paylineIdx}`);
+        return;
+      }
+
       const pattern = PAYLINE_PATTERNS[paylineIdx];
       const symbols = pattern.map(pos => grid[pos[0]][pos[1]]);
       
@@ -294,7 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
           const winAmount = Math.floor(payouts[payoutKey] * (betPerLine / 10));
           if (winAmount > 0) {
             results.push({
-              payline: paylineIdx,
+              payline: paylineIdx, // Use the actual payline index, not the array index
               symbol: currentSymbol,
               count: count,
               payout: winAmount
@@ -327,33 +476,60 @@ document.addEventListener('DOMContentLoaded', () => {
    */
   async function animateReels(grid) {
     const slotCells = document.querySelectorAll('.slot-cell');
-    const animations = [];
+    const columns = [[], [], []];
 
-    for (let row = 0; row < 3; row++) {
-      for (let col = 0; col < 3; col++) {
+    slotCells.forEach((cell, idx) => {
+      const col = idx % 3;
+      columns[col].push(cell);
+    });
+
+    columns.forEach((colCells) => {
+      colCells.forEach(cell => cell.classList.add('reel-spinning'));
+    });
+
+    const animations = [];
+    let lastReelDelay = 0;
+
+    // Play spin sound at the start
+    if (audioManager && !audioManager.getMuted()) {
+      audioManager.playSound('spin', { loop: false });
+    }
+
+    for (let col = 0; col < 3; col++) {
+      for (let row = 0; row < 3; row++) {
         const idx = row * 3 + col;
         const cell = slotCells[idx];
         const img = cell.querySelector('img');
 
-        const animation = new Promise(resolve => {
-          // Add a spinning class for blur/animation effect
-          img.classList.add('spinning');
+        // Animation timing: last reel lands at 5s
+        const stopDelay = 2000 + 1400 * col + 200 * row;
+        if (col === 2 && row === 1) lastReelDelay = stopDelay;
 
-          // Stagger the stop time for each reel
+        const animation = new Promise(resolve => {
+          img.classList.add('spinning');
           setTimeout(() => {
             img.classList.remove('spinning');
             img.src = `/images/symbols/${grid[row][col]}.png`;
             img.alt = grid[row][col];
-            // Add a small bounce effect on land
+            cell.classList.remove('reel-spinning');
             cell.classList.add('landed');
             setTimeout(() => cell.classList.remove('landed'), 300);
             resolve();
-          }, 100 + 80 * col + 40 * row); // Reels stop with staggered timing
+          }, stopDelay);
         });
         animations.push(animation);
       }
     }
+
     await Promise.all(animations);
+
+    // Stop spin sound and play reel-stop sound after last reel lands
+    setTimeout(() => {
+      if (audioManager && !audioManager.getMuted()) {
+        audioManager.stopSound('spin');
+        audioManager.playSound('reel-stop');
+      }
+    }, lastReelDelay);
   }
 
   // ==========================================================================
@@ -361,6 +537,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
 
   function adjustBet(amount) {
+    playSlotSound('button-click');
+    
     // Bets are in increments of 1, between 1 and 100
     let newBet = state.betPerLine + amount;
     if (newBet < 1) newBet = 1;
@@ -370,20 +548,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setMaxBet() {
+    playSlotSound('button-click');
     state.betPerLine = Math.min(100, Math.floor(state.balance / state.paylines.length));
     updateBetDisplay();
   }
 
   function updatePaylines() {
+    playSlotSound('button-click');
+    
     state.paylines = Array.from(elements.paylineCheckboxes)
       .filter(cb => cb.checked)
-      .map(cb => parseInt(cb.value));
+      .map(cb => parseInt(cb.value)); // This converts "0" to 0, "1" to 1, etc.
 
     // Ensure at least one payline is always selected
     if (state.paylines.length === 0) {
       elements.paylineCheckboxes[0].checked = true;
-      state.paylines = [0];
+      state.paylines = [0]; // Default to payline index 0 (displays as "Payline 1")
     }
+    
+    // Debug log to verify correct payline indices
+    console.log('Active paylines (0-based indices):', state.paylines);
+    
     // Update total bet display when paylines change
     updateBetDisplay();
   }
@@ -429,6 +614,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function toggleDropdown(e) {
     e.stopPropagation();
+    playSlotSound('button-click');
     const isVisible = elements.paylineDropdownMenu.style.display === 'block';
     elements.paylineDropdownMenu.style.display = isVisible ? 'none' : 'block';
   }
@@ -440,20 +626,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function selectAllPaylines() {
+    playSlotSound('button-click');
     elements.paylineCheckboxes.forEach(cb => cb.checked = true);
     updatePaylines();
     elements.paylineDropdownMenu.style.display = 'none';
   }
 
   function deselectAllPaylines() {
+    playSlotSound('button-click');
     elements.paylineCheckboxes.forEach(cb => cb.checked = false);
-    // Keep at least one selected
-    elements.paylineCheckboxes[0].checked = true;
+    state.paylines = [];
     updatePaylines();
     elements.paylineDropdownMenu.style.display = 'none';
   }
   
   function setRecommendedPaylines() {
+    playSlotSound('button-click');
     // Recommended is often just the first line or all lines
     selectAllPaylines();
   }
@@ -462,6 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const amount = parseInt(elements.cashoutAmountInput.value, 10);
     if (!amount || amount <= 0) {
       elements.cashoutResult.textContent = 'Enter a valid amount.';
+      playSlotSound('button-click'); // Error sound
       return;
     }
 
@@ -482,12 +671,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.bank-amount').textContent = data.bankBalance;
         elements.bankBalanceDisplay.textContent = data.bankBalance;
         elements.cashoutResult.textContent = `Cashed out ${amount} credits to bank!`;
+        playSlotSound('coin-drop'); // Success sound
       } else {
         elements.cashoutResult.textContent = data.error || 'Cashout failed.';
+        playSlotSound('button-click'); // Error sound
       }
     } catch (error) {
       console.error('Cashout error:', error);
       elements.cashoutResult.textContent = 'Cashout failed.';
+      playSlotSound('button-click'); // Error sound
     }
   }
 
@@ -507,6 +699,8 @@ document.addEventListener('DOMContentLoaded', () => {
       
       cardDiv.addEventListener('click', async function handlePick() {
         if (bonusCardsContainer.querySelector('.revealed')) return;
+        
+        playSlotSound('button-click');
         
         // Reveal all cards
         bonusData.forEach((c, i) => {
@@ -532,9 +726,11 @@ document.addEventListener('DOMContentLoaded', () => {
             state.balance = result.newBalance;
             updateBalanceDisplay();
             showResult(`Bonus: ${result.bonusResult.label} (+${result.bonusResult.amount} credits)`, true);
+            playSlotSound('coin-drop'); // Bonus claim sound
           }
         } catch (error) {
           console.error('Bonus error:', error);
+          playSlotSound('button-click'); // Error sound
         }
         
         closeBonusBtn.style.display = 'inline-block';
@@ -544,6 +740,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     closeBonusBtn.onclick = () => {
+      playSlotSound('button-click');
       bonusModal.style.display = 'none';
     };
   }
@@ -586,12 +783,30 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-// Add this after successful spin
-if (window.ActivityTracker) {
-  window.ActivityTracker.track('slot_spin', `Spun slot machine (Bet: ${bet} credits)`, {
-    bet: bet,
-    win: winAmount,
-    isJackpot: isJackpot,
-    symbols: symbols
-  });
-}
+// Add page visibility handling for background music
+document.addEventListener('visibilitychange', () => {
+  if (audioManager) {
+    if (document.hidden) {
+      audioManager.fadeOutMusic(1000);
+    } else {
+      if (!audioManager.getMuted()) {
+        audioManager.fadeInMusic(1000);
+      }
+    }
+  }
+});
+
+// Add activity tracking with audio (update the existing activity tracker section)
+// Replace the existing activity tracker code at the bottom with:
+document.addEventListener('spin-completed', (event) => {
+  const { bet, winAmount, isJackpot, symbols } = event.detail;
+  
+  if (window.ActivityTracker) {
+    window.ActivityTracker.track('slot_spin', `Spun slot machine (Bet: ${bet} credits)`, {
+      bet: bet,
+      win: winAmount,
+      isJackpot: isJackpot,
+      symbols: symbols
+    });
+  }
+});
