@@ -15,7 +15,7 @@
     "document": "^0.4.7",
     "dotenv": "^16.5.0",
     "express": "^4.21.2",
-    "express-session": "^1.17.3",
+    "express-session": "^1.18.2",
     "howler": "^2.2.4",
     "jsonwebtoken": "^9.0.2",
     "mongodb-memory-server": "^10.1.4",
